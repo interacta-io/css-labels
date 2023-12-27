@@ -18,7 +18,12 @@ export const createCssStyles = (): void => {
 
     font-weight: 500;
     cursor: pointer;
+    
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
+
     filter: var(--css-label-brightness);
     pointer-events: none;
     background-color: var(--css-label-background-color);

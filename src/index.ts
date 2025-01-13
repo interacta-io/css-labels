@@ -29,47 +29,43 @@ export class LabelRenderer {
   }
 
   public setLabels (labels: LabelOptions[]): void {
-    // Track which labels should be kept
-    const currentLabels = new Set(this._cssLabels.keys())
-    const newLabelIds = new Set(labels.map((l) => l.id))
-
-    // Remove only labels that aren't in the new dataset
-    currentLabels.forEach((labelId) => {
-      if (!newLabelIds.has(labelId)) {
-        const cssLabel = this._cssLabels.get(labelId)
-        if (cssLabel) {
-          this._elementToData.delete(cssLabel.element)
-          cssLabel.destroy()
-          this._cssLabels.delete(labelId)
-        }
-      }
-    })
-
-    // Update existing or create new labels
-    labels.forEach((label) => {
+    // Add new labels and take into account existing labels
+    const labelsToDelete = new Map(this._cssLabels)
+    labels.forEach(label => {
       const { x, y, fontSize, color, text, weight, opacity, shouldBeShown, style, className } = label
-      if (isNaN(x) && isNaN(y)) return
-      let cssLabel = this._cssLabels.get(label.id)
-
-      if (!cssLabel) {
-        cssLabel = new CssLabel(this._container, text)
+      const exists = this._cssLabels.get(label.id)
+      if (exists) {
+        labelsToDelete.delete(label.id)
+      } else {
+        const cssLabel = new CssLabel(this._container, label.text)
         this._cssLabels.set(label.id, cssLabel)
         this._elementToData.set(cssLabel.element, label)
       }
-
-      // Update all properties
-      cssLabel.setText(text)
-      cssLabel.setPosition(x, y)
-      if (style !== undefined) cssLabel.setStyle(style)
-      if (weight !== undefined) cssLabel.setWeight(weight)
-      if (fontSize !== undefined) cssLabel.setFontSize(fontSize)
-      if (color !== undefined) cssLabel.setColor(color)
-      if (this._padding !== undefined) cssLabel.setPadding(this._padding)
-      if (this._pointerEvents !== undefined) cssLabel.setPointerEvents(this._pointerEvents)
-      if (opacity !== undefined) cssLabel.setOpacity(opacity)
-      if (shouldBeShown !== undefined) cssLabel.setForceShow(shouldBeShown)
-      if (className !== undefined) cssLabel.setClassName(className)
+      const labelToUpdate = this._cssLabels.get(label.id)
+      if (labelToUpdate) {
+        labelToUpdate.setText(text)
+        labelToUpdate.setPosition(x, y)
+        if (style !== undefined) labelToUpdate.setStyle(style)
+        if (weight !== undefined) labelToUpdate.setWeight(weight)
+        if (fontSize !== undefined) labelToUpdate.setFontSize(fontSize)
+        if (color !== undefined) labelToUpdate.setColor(color)
+        if (this._padding !== undefined) labelToUpdate.setPadding(this._padding)
+        if (this._pointerEvents !== undefined) labelToUpdate.setPointerEvents(this._pointerEvents)
+        if (opacity !== undefined) labelToUpdate.setOpacity(opacity)
+        if (shouldBeShown !== undefined) labelToUpdate.setForceShow(shouldBeShown)
+        if (className !== undefined) labelToUpdate.setClassName(className)
+      }
     })
+
+    // Remove labels from points that don't longer exist
+    for (const [key] of labelsToDelete) {
+      const cssLabel = this._cssLabels.get(key)
+      if (cssLabel) {
+        this._elementToData.delete(cssLabel.element)
+        cssLabel.destroy()
+      }
+      this._cssLabels.delete(key)
+    }
   }
 
   public draw (withIntersection = true): void {

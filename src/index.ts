@@ -33,7 +33,7 @@ export class LabelRenderer {
     const labelsToDelete = new Map(this._cssLabels)
     labels.forEach(label => {
       const { x, y, fontSize, color, text, weight, opacity, shouldBeShown, style, className } = label
-      const exists = labelsToDelete.get(label.id)
+      const exists = this._cssLabels.get(label.id)
       if (exists) {
         labelsToDelete.delete(label.id)
       } else {

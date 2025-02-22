@@ -1,6 +1,6 @@
 {
   "name": "@interacta/css-labels",
-  "version": "0.1.2",
+  "version": "0.1.3-beta.0",
   "description": "CSS Label renderer",
   "author": "Interacta",
   "main": "dist/index.js",
@@ -8,8 +8,8 @@
   "module": "dist/index.js",
   "type": "module",
   "sideEffects": false,
+  "files": ["dist"],
   "scripts": {
-    "install": "npm run build",
     "build": "tsc",
     "watch": "tsc-watch",
     "lint": "eslint \"src/**/*.ts\" --ignore-path .gitignore"

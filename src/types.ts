@@ -17,13 +17,13 @@ export interface LabelOptions {
   shouldBeShown?: boolean;
   style?: string;
   className?: string;
+  padding?: Padding;
 }
 
 export type OnClickCallback = (e: MouseEvent, label: LabelOptions) => void | undefined
 
 export interface Options {
   onLabelClick?: OnClickCallback;
-  padding?: Padding;
   pointerEvents?: 'none' | 'auto' | 'all';
   dispatchWheelEventElement?: HTMLElement;
   dontInjectStyles?: boolean;

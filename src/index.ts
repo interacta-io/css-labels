@@ -1,5 +1,5 @@
 import { CssLabel } from './css-label.js'
-import { LabelOptions, OnClickCallback, Options, Padding } from './types.js'
+import { LabelOptions, OnClickCallback, Options } from './types.js'
 
 import { cssLabelContainerStyles, injectStyles, labelsContainerClassName, hiddenLabelsContainerClassName } from './styles.js'
 
@@ -8,7 +8,6 @@ export class LabelRenderer {
   private _cssLabels = new Map<string, CssLabel>()
   private _container: HTMLDivElement
   private _onClickCallback: OnClickCallback | undefined
-  private _padding: Padding | undefined
   private _pointerEvents: Options['pointerEvents'] | undefined
   private _elementToData = new Map<HTMLDivElement, LabelOptions>()
   private _dispatchWheelEventElement: HTMLElement | undefined
@@ -21,7 +20,6 @@ export class LabelRenderer {
 
     this._container.className = labelsContainerClassName
     if (options?.onLabelClick) this._onClickCallback = options.onLabelClick
-    if (options?.padding) this._padding = options.padding
     if (options?.pointerEvents) this._pointerEvents = options.pointerEvents
     if (options?.dontInjectStyles) this._dontInjectStyles = options.dontInjectStyles
     if (options?.dispatchWheelEventElement) {
@@ -34,7 +32,7 @@ export class LabelRenderer {
     // Add new labels and take into account existing labels
     const labelsToDelete = new Map(this._cssLabels)
     labels.forEach(label => {
-      const { x, y, fontSize, color, text, weight, opacity, shouldBeShown, style, className } = label
+      const { x, y, fontSize, color, text, weight, opacity, shouldBeShown, style, className, padding } = label
       const exists = this._cssLabels.get(label.id)
       if (exists) {
         labelsToDelete.delete(label.id)
@@ -51,7 +49,8 @@ export class LabelRenderer {
         if (weight !== undefined) labelToUpdate.setWeight(weight)
         if (fontSize !== undefined) labelToUpdate.setFontSize(fontSize)
         if (color !== undefined) labelToUpdate.setColor(color)
-        if (this._padding !== undefined) labelToUpdate.setPadding(this._padding)
+        if (padding !== undefined) labelToUpdate.setPadding(padding)
+        else labelToUpdate.resetPadding()
         if (this._pointerEvents !== undefined) labelToUpdate.setPointerEvents(this._pointerEvents)
         if (opacity !== undefined) labelToUpdate.setOpacity(opacity)
         if (shouldBeShown !== undefined) labelToUpdate.setForceShow(shouldBeShown)

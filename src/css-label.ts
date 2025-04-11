@@ -16,6 +16,7 @@ export class CssLabel {
   private _visible = false
   private _prevVisible = false
   private _weight = 0
+  private _needsMeasureUpdate = true
 
   private _customFontSize = DEFAULT_FONT_SIZE
   private _customColor: string | undefined = undefined
@@ -50,7 +51,7 @@ export class CssLabel {
     if (this._text !== text) {
       this._text = text
       this.element.innerHTML = text
-      this._measureText()
+      this._needsMeasureUpdate = true
     }
   }
 
@@ -109,7 +110,7 @@ export class CssLabel {
     if (this._customFontSize !== fontSize) {
       this.element.style.fontSize = `${fontSize}px`
       this._customFontSize = fontSize
-      this._measureText()
+      this._needsMeasureUpdate = true
     }
   }
 
@@ -117,9 +118,11 @@ export class CssLabel {
    * Resets the font size of the element to default value.
    */
   public resetFontSize (): void {
-    this.element.style.fontSize = `${DEFAULT_FONT_SIZE}px`
-    this._customFontSize = DEFAULT_FONT_SIZE
-    this._measureText()
+    if (this._customFontSize !== DEFAULT_FONT_SIZE) {
+      this.element.style.fontSize = `${DEFAULT_FONT_SIZE}px`
+      this._customFontSize = DEFAULT_FONT_SIZE
+      this._needsMeasureUpdate = true
+    }
   }
 
   /**
@@ -187,7 +190,8 @@ export class CssLabel {
    * This value cannot be changed through `setStyle` or `setClassName`
    * methods because it is used to measure the width and height of the label.
    * @param padding - The padding object with left, top, right and bottom properties.
-   * If not specified, it will use the default value of `{ left: 9px, top: 6px, right: 9px, bottom: 6px }`.
+   * If not specified or partially specified, it will use the default value of
+   * `{ left: 9px, top: 6px, right: 9px, bottom: 6px }` for unspecified values.
    */
   public setPadding (padding = {
     left: LEFT_RIGHT_PADDING,
@@ -201,11 +205,17 @@ export class CssLabel {
         this._customPadding.bottom !== padding.bottom) {
       this._customPadding = padding
       this.element.style.padding = `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`
-      this._measureText()
+      this._needsMeasureUpdate = true
     }
   }
 
   public resetPadding (): void {
+    if (this._customPadding.left === LEFT_RIGHT_PADDING &&
+        this._customPadding.top === TOP_BOTTOM_PADDING &&
+        this._customPadding.right === LEFT_RIGHT_PADDING &&
+        this._customPadding.bottom === TOP_BOTTOM_PADDING) {
+      return
+    }
     const padding = {
       left: LEFT_RIGHT_PADDING,
       top: TOP_BOTTOM_PADDING,
@@ -214,7 +224,7 @@ export class CssLabel {
     }
     this.element.style.padding = `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`
     this._customPadding = padding
-    this._measureText()
+    this._needsMeasureUpdate = true
   }
 
   /**
@@ -239,6 +249,7 @@ export class CssLabel {
    * the `transform` from `setStyle` CSS style if specified.
    */
   public draw (): void {
+    this._measureText()
     const isVisible = this.getVisibility()
     if (isVisible !== this._prevVisible) {
       if (this._prevVisible === false) {
@@ -259,6 +270,8 @@ export class CssLabel {
   }
 
   public overlaps (label: CssLabel): boolean {
+    this._measureText()
+    label._measureText()
     return doRectsIntersect({
       height: this._estimatedHeight,
       width: this._estimatedWidth,
@@ -317,9 +330,15 @@ export class CssLabel {
     }
   }
 
+  /**
+   * Measures the text if properties affecting dimensions have changed since the last measurement.
+   */
   private _measureText (): void {
-    const { left, top, right, bottom } = this._customPadding
-    this._estimatedWidth = this._customFontSize * this.fontWidthHeightRatio * this.element.innerHTML.length + left + right
-    this._estimatedHeight = this._customFontSize + top + bottom
+    if (this._needsMeasureUpdate) {
+      const { left, top, right, bottom } = this._customPadding
+      this._estimatedWidth = this._customFontSize * this.fontWidthHeightRatio * this.element.innerHTML.length + left + right
+      this._estimatedHeight = this._customFontSize + top + bottom
+      this._needsMeasureUpdate = false
+    }
   }
 }

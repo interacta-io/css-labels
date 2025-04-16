@@ -249,7 +249,6 @@ export class CssLabel {
    * the `transform` from `setStyle` CSS style if specified.
    */
   public draw (): void {
-    this._measureText()
     const isVisible = this.getVisibility()
     if (isVisible !== this._prevVisible) {
       if (this._prevVisible === false) {

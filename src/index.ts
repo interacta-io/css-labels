@@ -1,5 +1,5 @@
 import { CssLabel } from './css-label.js'
-import { LabelOptions, OnClickCallback, Options } from './types.js'
+import { LabelOptions, OnClickCallback, Options, Padding } from './types.js'
 
 import { cssLabelContainerStyles, injectStyles, labelsContainerClassName, hiddenLabelsContainerClassName } from './styles.js'
 
@@ -12,6 +12,8 @@ export class LabelRenderer {
   private _elementToData = new Map<HTMLDivElement, LabelOptions>()
   private _dispatchWheelEventElement: HTMLElement | undefined
   private _dontInjectStyles: boolean | undefined
+  private _padding: Padding | undefined
+  private _fontSize: number | undefined
 
   public constructor (container: HTMLDivElement, options?: Options) {
     if (!options?.dontInjectStyles && !globalCssLabelRendererStyles) globalCssLabelRendererStyles = injectStyles(cssLabelContainerStyles)
@@ -22,6 +24,9 @@ export class LabelRenderer {
     if (options?.onLabelClick) this._onClickCallback = options.onLabelClick
     if (options?.pointerEvents) this._pointerEvents = options.pointerEvents
     if (options?.dontInjectStyles) this._dontInjectStyles = options.dontInjectStyles
+    if (options?.padding) this._padding = options.padding
+    if (options?.fontSize) this._fontSize = options.fontSize
+
     if (options?.dispatchWheelEventElement) {
       this._dispatchWheelEventElement = options.dispatchWheelEventElement
       this._container.addEventListener('wheel', this._onWheel.bind(this))
@@ -47,10 +52,21 @@ export class LabelRenderer {
         labelToUpdate.setPosition(x, y)
         if (style !== undefined) labelToUpdate.setStyle(style)
         if (weight !== undefined) labelToUpdate.setWeight(weight)
-        if (fontSize !== undefined) labelToUpdate.setFontSize(fontSize)
+
         if (color !== undefined) labelToUpdate.setColor(color)
+
+        /**
+         * We need to check if the font size and padding are specified in the Options.
+         * These properties can't be set using general CSS styles or class names because
+         * they are used to calculate the label's size.
+         */
+        if (fontSize !== undefined) labelToUpdate.setFontSize(fontSize)
+        else if (this._fontSize !== undefined) labelToUpdate.setFontSize(this._fontSize)
+        else labelToUpdate.resetFontSize()
         if (padding !== undefined) labelToUpdate.setPadding(padding)
+        else if (this._padding !== undefined) labelToUpdate.setPadding(this._padding)
         else labelToUpdate.resetPadding()
+
         if (this._pointerEvents !== undefined) labelToUpdate.setPointerEvents(this._pointerEvents)
         if (opacity !== undefined) labelToUpdate.setOpacity(opacity)
         if (shouldBeShown !== undefined) labelToUpdate.setForceShow(shouldBeShown)

@@ -35,7 +35,10 @@ export class CssLabel {
   public constructor (container: HTMLDivElement, text?: string) {
     s.createCssStyles()
     this._container = container
-    this._updateClasses()
+    // Apply base styles to the element
+    s.applyLabelStyles(this.element)
+    // Don't call _updateClasses() here as it will set opacity to 0
+    // Visibility will be set properly when draw() is called
     if (text) this.setText(text)
     this.resetFontSize()
     this.resetPadding()
@@ -61,6 +64,10 @@ export class CssLabel {
   public setPosition (x: number, y: number): void {
     this._x = x
     this._y = y
+    // // If position is set to valid coordinates, make the label visible
+    // if (x >= 0 && y >= 0) {
+    //   this._visible = true
+    // }
   }
 
   /**
@@ -239,13 +246,16 @@ export class CssLabel {
    */
   public draw (): void {
     const isVisible = this.getVisibility()
+
+    // Always update classes to ensure correct styling
+    this._updateClasses()
+
     if (isVisible !== this._prevVisible) {
       if (this._prevVisible === false) {
         this._container.appendChild(this.element)
       } else {
         this._container.removeChild(this.element)
       }
-      this._updateClasses()
       this._prevVisible = isVisible
     }
 
@@ -310,9 +320,15 @@ export class CssLabel {
     if (isVisible) {
       window.requestAnimationFrame(() => {
         this.element.className = `${s.label} ${this._customClassName || ''}`
+        // Ensure base styles are applied and opacity is set to 1 for visible labels
+        s.applyLabelStyles(this.element)
+        this.element.style.opacity = this._customOpacity !== undefined ? String(this._customOpacity) : '1'
       })
     } else {
       this.element.className = `${s.label} ${this._customClassName || ''} ${s.hiddenLabel}`
+      // Apply base styles but set opacity to 0 for hidden labels
+      s.applyLabelStyles(this.element)
+      this.element.style.opacity = '0'
     }
   }
 

@@ -18,6 +18,9 @@ export class LabelRenderer {
     container.addEventListener('click', this._onClick.bind(this))
 
     this._container.className = s.labelsContainer
+    // Apply container styles directly
+    s.applyContainerStyles(this._container)
+
     if (options?.onLabelClick) this._onClickCallback = options.onLabelClick
     if (options?.padding) this._padding = options.padding
     if (options?.pointerEvents) this._pointerEvents = options.pointerEvents
@@ -75,10 +78,12 @@ export class LabelRenderer {
 
   public show (): void {
     this._container.className = s.labelsContainer
+    s.applyContainerStyles(this._container)
   }
 
   public hide (): void {
     this._container.className = `${s.labelsContainer} ${s.hidden}`
+    s.applyHiddenStyles(this._container)
   }
 
   public destroy (): void {

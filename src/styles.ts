@@ -1,32 +1,27 @@
 export const labelsContainer = 'css-label--labels-container'
 export const hidden = 'css-label--labels-container-hidden'
 
-let globalContainerStyle: HTMLStyleElement
+export const applyContainerStyles = (element: HTMLElement): void => {
+  element.style.transition = 'opacity 100ms'
+  element.style.position = 'absolute'
+  element.style.width = '100%'
+  element.style.height = '100%'
+  element.style.overflow = 'hidden'
+  element.style.top = '0%'
+  element.style.pointerEvents = 'none'
+  element.style.opacity = '1'
+}
+
+export const applyHiddenStyles = (element: HTMLElement): void => {
+  element.style.opacity = '0'
+  // Apply pointer-events: none to all child divs
+  const childDivs = element.querySelectorAll('div')
+  childDivs.forEach(div => {
+    div.style.pointerEvents = 'none'
+  })
+}
+
+// Keep the old function for backward compatibility but make it a no-op
 export const createCssStyles = (): void => {
-  if (globalContainerStyle) return
-  globalContainerStyle = document.createElement('style')
-  globalContainerStyle.innerHTML = `
-  .${labelsContainer} {
-    transition: opacity 100ms;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    top: 0%;
-    pointer-events: none;
-    opacity: 1;
-  }
-  .${hidden} {
-    opacity: 0;
-
-    div {
-      pointer-events: none;
-    }
-  }
-`
-
-  // Insert the global CSS style element into the head of the document if it doesn't already exist
-  const firstStyleTagInHead = document.head.getElementsByTagName('style')[0]
-  if (firstStyleTagInHead) document.head.insertBefore(globalContainerStyle, firstStyleTagInHead)
-  else document.head.appendChild(globalContainerStyle)
+  // No longer needed - styles are applied directly to elements
 }

@@ -40,3 +40,17 @@ label.setVisibility(true)
 label.setOpacity(1)
 label.draw()
 ```
+
+### CSP Compatibility
+
+This library is designed to work with Content Security Policy (CSP) restrictions. By default, it applies styles directly to elements using inline styles, avoiding the need to inject `<style>` tags into the document head.
+
+If you prefer to use CSS classes instead of inline styles, you can include the provided CSS file in your HTML:
+
+```html
+<link rel="stylesheet" href="node_modules/@interacta/css-labels/src/css-styles.css">
+```
+
+Or copy the CSS content from `src/css-styles.css` into your own stylesheet.
+
+This approach ensures compatibility with strict CSP policies that prevent dynamic style injection.

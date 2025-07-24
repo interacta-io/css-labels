@@ -1,6 +1,6 @@
 {
   "name": "@interacta/css-labels",
-  "version": "0.1.2",
+  "version": "0.1.2-csp",
   "description": "CSS Label renderer",
   "author": "Interacta",
   "main": "dist/index.js",

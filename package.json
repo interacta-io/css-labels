@@ -1,6 +1,6 @@
 {
   "name": "@interacta/css-labels",
-  "version": "0.1.2-csp",
+  "version": "0.1.3-csp",
   "description": "CSS Label renderer",
   "author": "Interacta",
   "main": "dist/index.js",
@@ -8,6 +8,10 @@
   "module": "dist/index.js",
   "type": "module",
   "sideEffects": false,
+  "files": [
+    "dist",
+    "css-labels.css"
+  ],
   "scripts": {
     "install": "npm run build",
     "build": "tsc",

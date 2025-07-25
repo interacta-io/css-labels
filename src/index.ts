@@ -11,9 +11,11 @@ export class LabelRenderer {
   private _pointerEvents: Options['pointerEvents'] | undefined
   private _elementToData = new Map<HTMLDivElement, LabelOptions>()
   private _dispatchWheelEventElement: HTMLElement | undefined
+  private _dontInjectStyles: boolean | undefined
 
   public constructor (container: HTMLDivElement, options?: Options) {
-    s.createCssStyles()
+    this._dontInjectStyles = options?.dontInjectStyles
+    if (!options?.dontInjectStyles) s.createCssStyles()
     this._container = container
     container.addEventListener('click', this._onClick.bind(this))
 
@@ -40,7 +42,7 @@ export class LabelRenderer {
       if (exists) {
         labelsToDelete.delete(label.id)
       } else {
-        const cssLabel = new CssLabel(this._container, label.text)
+        const cssLabel = new CssLabel(this._container, label.text, { dontInjectStyles: this._dontInjectStyles })
         this._cssLabels.set(label.id, cssLabel)
         this._elementToData.set(cssLabel.element, label)
       }

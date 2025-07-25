@@ -41,16 +41,34 @@ label.setOpacity(1)
 label.draw()
 ```
 
-### CSP Compatibility
+### CSP (Content Security Policy) Support
 
-This library is designed to work with Content Security Policy (CSP) restrictions. By default, it applies styles directly to elements using inline styles, avoiding the need to inject `<style>` tags into the document head.
+If you're experiencing CSP issues with automatic style injection, you can use the `dontInjectStyles` option and include the CSS manually:
 
-If you prefer to use CSS classes instead of inline styles, you can include the provided CSS file in your HTML:
+```javascript
+import { LabelRenderer, CssLabel } from '@interacta/css-labels'
 
-```html
-<link rel="stylesheet" href="node_modules/@interacta/css-labels/src/css-styles.css">
+// For LabelRenderer
+const div = document.querySelector('#labels')  
+const renderer = new LabelRenderer(div, { dontInjectStyles: true })
+
+// For CssLabel
+const label = new CssLabel(div, '🐣', { dontInjectStyles: true })
+
+// ... rest of your code
 ```
 
-Or copy the CSS content from `src/css-styles.css` into your own stylesheet.
+When using `dontInjectStyles: true`, you need to include the CSS file manually in your project:
 
-This approach ensures compatibility with strict CSP policies that prevent dynamic style injection.
+1. Copy the `css-labels.css` file from the package to your project
+2. Import it in your main CSS file or HTML:
+
+```html
+<link rel="stylesheet" href="path/to/css-labels.css">
+```
+
+Or import it in your CSS:
+
+```css
+@import 'path/to/css-labels.css';
+```

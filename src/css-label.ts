@@ -32,8 +32,8 @@ export class CssLabel {
   private _customStyle: string | undefined
   private _customClassName: string | undefined
 
-  public constructor (container: HTMLDivElement, text?: string) {
-    s.createCssStyles()
+  public constructor (container: HTMLDivElement, text?: string, options?: Options) {
+    if (!options?.dontInjectStyles) s.createCssStyles()
     this._container = container
     // Apply base styles to the element
     s.applyLabelStyles(this.element)

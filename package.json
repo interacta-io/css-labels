@@ -8,9 +8,18 @@
   "module": "dist/index.js",
   "type": "module",
   "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "install": "npm run build",
-    "build": "tsc",
+    "build": "rm -rf dist && tsc && cp src/styles.css dist/styles.css",
     "watch": "tsc-watch",
     "lint": "eslint \"src/**/*.ts\" --ignore-path .gitignore"
   },

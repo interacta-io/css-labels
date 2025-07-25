@@ -2,8 +2,7 @@ import { rectIntersect } from './helper.js'
 import { LEFT_RIGHT_PADDING, TOP_BOTTOM_PADDING, DEFAULT_FONT_SIZE } from './variables.js'
 import { Padding, Options } from './types.js'
 
-import * as s from './css-label-styles.js'
-
+import * as s from './styles.js'
 export class CssLabel {
   public element: HTMLDivElement = document.createElement('div')
   public readonly fontWidthHeightRatio = 0.6
@@ -33,7 +32,6 @@ export class CssLabel {
   private _customClassName: string | undefined
 
   public constructor (container: HTMLDivElement, text?: string) {
-    s.createCssStyles()
     this._container = container
     this._updateClasses()
     if (text) this.setText(text)

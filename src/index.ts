@@ -13,7 +13,7 @@ export class LabelRenderer {
   private _dispatchWheelEventElement: HTMLElement | undefined
 
   public constructor (container: HTMLDivElement, options?: Options) {
-    s.createCssStyles()
+    if (!options?.dontInjectStyles) s.createCssStyles()
     this._container = container
     container.addEventListener('click', this._onClick.bind(this))
 

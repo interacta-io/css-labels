@@ -26,4 +26,5 @@ export interface Options {
   padding?: Padding;
   pointerEvents?: 'none' | 'auto' | 'all';
   dispatchWheelEventElement?: HTMLElement;
+  dontInjectStyles?: boolean;
 }

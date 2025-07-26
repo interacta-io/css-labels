@@ -32,7 +32,6 @@
   top: 0;
   left: 0;
 
-  font-weight: 500;
   cursor: pointer;
   
   -webkit-user-select: none;
@@ -51,5 +50,6 @@
 }
 
 .css-label--hidden {
+  /* We use "important" here because the users may pass their own label class, overriding the opacity */
   opacity: 0 !important;
 }

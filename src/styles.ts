@@ -1,15 +1,15 @@
-export const labelsContainer = 'css-label--labels-container'
-export const hidden = 'css-label--labels-container-hidden'
-export const label = 'css-label--label'
-export const hiddenLabel = 'css-label--hidden'
+export const labelsContainerClassName = 'css-label--labels-container'
+export const hiddenLabelsContainerClassName = 'css-label--labels-container-hidden'
+export const labelClassName = 'css-label--label'
+export const hiddenLabelClassName = 'css-label--hidden'
 
-export const cssLabelRendererStyles = `
+export const cssLabelContainerStyles = `
   :root {
     --css-label-background-color: #1e2428;
     --css-label-brightness: brightness(150%);
   }
 
-  .${labelsContainer} {
+  .${labelsContainerClassName} {
     transition: opacity 100ms;
     position: absolute;
     width: 100%;
@@ -20,7 +20,7 @@ export const cssLabelRendererStyles = `
     opacity: 1;
   }
 
-  .${hidden} {
+  .${hiddenLabelsContainerClassName} {
     opacity: 0;
 
     div {
@@ -30,12 +30,11 @@ export const cssLabelRendererStyles = `
 `
 
 export const cssLabelStyles = `
-  .${label} {
+  .${labelClassName} {
     position: absolute;
     top: 0;
     left: 0;
 
-    font-weight: 500;
     cursor: pointer;
     
     -webkit-user-select: none;
@@ -53,7 +52,8 @@ export const cssLabelStyles = `
     opacity: 1;
   }
 
-  .${hiddenLabel} {
+  /* We use "important" here because the users may pass their own label class, overriding the opacity */
+  .${hiddenLabelClassName} {
     opacity: 0 !important;
   }
 `

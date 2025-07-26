@@ -5,7 +5,7 @@ export type Rect = {
   height: number;
 }
 
-export function rectIntersect (rect1: Rect, rect2: Rect): boolean {
+export function doRectsIntersect (rect1: Rect, rect2: Rect): boolean {
   const [left1, top1, right1, bottom1] = [rect1.x, rect1.y + rect1.height, rect1.x + rect1.width, rect1.y]
   const [left2, top2, right2, bottom2] = [rect2.x, rect2.y + rect2.height, rect2.x + rect2.width, rect2.y]
 

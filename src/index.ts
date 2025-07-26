@@ -1,7 +1,7 @@
 import { CssLabel } from './css-label.js'
 import { LabelOptions, OnClickCallback, Options, Padding } from './types.js'
 
-import { cssLabelRendererStyles, injectStyles, labelsContainer as labelsContainerClassName, hidden as hiddenClassName } from './styles.js'
+import { cssLabelContainerStyles, injectStyles, labelsContainerClassName, hiddenLabelsContainerClassName } from './styles.js'
 
 let globalCssLabelRendererStyles: HTMLStyleElement | undefined
 export class LabelRenderer {
@@ -15,7 +15,7 @@ export class LabelRenderer {
   private _dontInjectStyles: boolean | undefined
 
   public constructor (container: HTMLDivElement, options?: Options) {
-    if (!options?.dontInjectStyles && !globalCssLabelRendererStyles) globalCssLabelRendererStyles = injectStyles(cssLabelRendererStyles)
+    if (!options?.dontInjectStyles && !globalCssLabelRendererStyles) globalCssLabelRendererStyles = injectStyles(cssLabelContainerStyles)
     this._container = container
     container.addEventListener('click', this._onClick.bind(this))
 
@@ -80,7 +80,7 @@ export class LabelRenderer {
   }
 
   public hide (): void {
-    this._container.className = `${labelsContainerClassName} ${hiddenClassName}`
+    this._container.className = `${labelsContainerClassName} ${hiddenLabelsContainerClassName}`
   }
 
   public destroy (): void {

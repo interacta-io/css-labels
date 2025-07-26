@@ -1,8 +1,8 @@
-import { rectIntersect } from './helper.js'
+import { doRectsIntersect } from './helper.js'
 import { LEFT_RIGHT_PADDING, TOP_BOTTOM_PADDING, DEFAULT_FONT_SIZE } from './variables.js'
 import { Padding, Options } from './types.js'
 
-import { cssLabelStyles, injectStyles, label as labelClassName, hiddenLabel as hiddenLabelClassName } from './styles.js'
+import { cssLabelStyles, injectStyles, labelClassName, hiddenLabelClassName } from './styles.js'
 
 let globalCssLabelStyles: HTMLStyleElement | undefined
 export class CssLabel {
@@ -259,7 +259,7 @@ export class CssLabel {
   }
 
   public overlaps (label: CssLabel): boolean {
-    return rectIntersect({
+    return doRectsIntersect({
       height: this._estimatedHeight,
       width: this._estimatedWidth,
       x: this._x,

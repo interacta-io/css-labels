@@ -1,8 +1,9 @@
 import { CssLabel } from './css-label.js'
 import { LabelOptions, OnClickCallback, Options, Padding } from './types.js'
 
-import * as s from './styles.js'
+import { cssLabelRendererStyles, injectStyles, labelsContainer as labelsContainerClassName, hidden as hiddenClassName } from './styles.js'
 
+let globalCssLabelRendererStyles: HTMLStyleElement | undefined
 export class LabelRenderer {
   private _cssLabels = new Map<string, CssLabel>()
   private _container: HTMLDivElement
@@ -11,17 +12,18 @@ export class LabelRenderer {
   private _pointerEvents: Options['pointerEvents'] | undefined
   private _elementToData = new Map<HTMLDivElement, LabelOptions>()
   private _dispatchWheelEventElement: HTMLElement | undefined
+  private _dontInjectStyles: boolean | undefined
 
   public constructor (container: HTMLDivElement, options?: Options) {
-    if (!options?.dontInjectStyles) s.createCssStyles()
+    if (!options?.dontInjectStyles && !globalCssLabelRendererStyles) globalCssLabelRendererStyles = injectStyles(cssLabelRendererStyles)
     this._container = container
     container.addEventListener('click', this._onClick.bind(this))
 
-    this._container.className = s.labelsContainer
+    this._container.className = labelsContainerClassName
     if (options?.onLabelClick) this._onClickCallback = options.onLabelClick
     if (options?.padding) this._padding = options.padding
     if (options?.pointerEvents) this._pointerEvents = options.pointerEvents
-
+    if (options?.dontInjectStyles) this._dontInjectStyles = options.dontInjectStyles
     if (options?.dispatchWheelEventElement) {
       this._dispatchWheelEventElement = options.dispatchWheelEventElement
       this._container.addEventListener('wheel', this._onWheel.bind(this))
@@ -37,7 +39,7 @@ export class LabelRenderer {
       if (exists) {
         labelsToDelete.delete(label.id)
       } else {
-        const cssLabel = new CssLabel(this._container, label.text)
+        const cssLabel = new CssLabel(this._container, label.text, this._dontInjectStyles)
         this._cssLabels.set(label.id, cssLabel)
         this._elementToData.set(cssLabel.element, label)
       }
@@ -74,11 +76,11 @@ export class LabelRenderer {
   }
 
   public show (): void {
-    this._container.className = s.labelsContainer
+    this._container.className = labelsContainerClassName
   }
 
   public hide (): void {
-    this._container.className = `${s.labelsContainer} ${s.hidden}`
+    this._container.className = `${labelsContainerClassName} ${hiddenClassName}`
   }
 
   public destroy (): void {

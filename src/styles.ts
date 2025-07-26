@@ -3,12 +3,7 @@ export const hidden = 'css-label--labels-container-hidden'
 export const label = 'css-label--label'
 export const hiddenLabel = 'css-label--hidden'
 
-let cssLabelsStyleElement: HTMLStyleElement
-export const createCssStyles = (): void => {
-  if (cssLabelsStyleElement) return
-
-  cssLabelsStyleElement = document.createElement('style')
-  cssLabelsStyleElement.innerHTML = `
+export const cssLabelRendererStyles = `
   :root {
     --css-label-background-color: #1e2428;
     --css-label-brightness: brightness(150%);
@@ -32,7 +27,9 @@ export const createCssStyles = (): void => {
       pointer-events: none;
     }
   }
+`
 
+export const cssLabelStyles = `
   .${label} {
     position: absolute;
     top: 0;
@@ -61,8 +58,14 @@ export const createCssStyles = (): void => {
   }
 `
 
+export const injectStyles = (styles: string): HTMLStyleElement => {
+  const styleElement = document.createElement('style')
+  styleElement.innerHTML = styles
+
   // Insert the global CSS style element into the head of the document if it doesn't already exist
   const firstStyleTagInHead = document.head.getElementsByTagName('style')[0]
-  if (firstStyleTagInHead) document.head.insertBefore(cssLabelsStyleElement, firstStyleTagInHead)
-  else document.head.appendChild(cssLabelsStyleElement)
+  if (firstStyleTagInHead) document.head.insertBefore(styleElement, firstStyleTagInHead)
+  else document.head.appendChild(styleElement)
+
+  return styleElement
 }

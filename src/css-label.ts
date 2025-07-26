@@ -2,7 +2,9 @@ import { rectIntersect } from './helper.js'
 import { LEFT_RIGHT_PADDING, TOP_BOTTOM_PADDING, DEFAULT_FONT_SIZE } from './variables.js'
 import { Padding, Options } from './types.js'
 
-import * as s from './styles.js'
+import { cssLabelStyles, injectStyles, label as labelClassName, hiddenLabel as hiddenLabelClassName } from './styles.js'
+
+let globalCssLabelStyles: HTMLStyleElement | undefined
 export class CssLabel {
   public element: HTMLDivElement = document.createElement('div')
   public readonly fontWidthHeightRatio = 0.6
@@ -31,7 +33,8 @@ export class CssLabel {
   private _customStyle: string | undefined
   private _customClassName: string | undefined
 
-  public constructor (container: HTMLDivElement, text?: string) {
+  public constructor (container: HTMLDivElement, text?: string, dontInjectStyles?: boolean) {
+    if (!dontInjectStyles && !globalCssLabelStyles) globalCssLabelStyles = injectStyles(cssLabelStyles)
     this._container = container
     this._updateClasses()
     if (text) this.setText(text)
@@ -307,10 +310,10 @@ export class CssLabel {
     const isVisible = this.getVisibility()
     if (isVisible) {
       window.requestAnimationFrame(() => {
-        this.element.className = `${s.label} ${this._customClassName || ''}`
+        this.element.className = `${labelClassName} ${this._customClassName || ''}`
       })
     } else {
-      this.element.className = `${s.label} ${this._customClassName || ''} ${s.hiddenLabel}`
+      this.element.className = `${labelClassName} ${this._customClassName || ''} ${hiddenLabelClassName}`
     }
   }
 

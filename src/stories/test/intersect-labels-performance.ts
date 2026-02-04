@@ -38,6 +38,10 @@ export function playIntersectLabelsPerformance (container: HTMLDivElement): () =
     const now = performance.now()
     const w = container.offsetWidth
     const h = container.offsetHeight
+    if (w === 0 || h === 0) {
+      rafId = requestAnimationFrame(tick)
+      return
+    }
     const labels = generateLabels(now, w, h)
     renderer.setLabels(labels)
     renderer.draw()

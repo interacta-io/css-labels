@@ -1,12 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/html-vite'
+import { renderContainer, LABEL_RENDERER_DIV_ATTR } from './render-container'
 import { playSingleLabel } from './quick-start/single-label'
 import { playLabels } from './quick-start/labels'
 // @ts-expect-error - Vite raw import
 import singleLabelSource from './quick-start/single-label.ts?raw'
 // @ts-expect-error - Vite raw import
 import labelsSource from './quick-start/labels.ts?raw'
-
-const LABEL_RENDERER_DIV_ATTR = 'data-label-renderer-root'
 
 const meta = {
   title: 'Quick Start',
@@ -16,18 +15,6 @@ const meta = {
 export default meta
 
 type Story = StoryObj
-
-function renderContainer (): HTMLDivElement {
-  const wrapper = document.createElement('div')
-  wrapper.style.cssText = 'display: flex; justify-content: center; align-items: center; min-height: 200px;'
-
-  const div = document.createElement('div')
-  div.style.cssText = 'position: relative; width: 200px; height: 200px; margin: 1rem;'
-  div.setAttribute(LABEL_RENDERER_DIV_ATTR, 'true')
-
-  wrapper.appendChild(div)
-  return wrapper
-}
 
 export const SingleLabel: Story = {
   name: 'Single label',

@@ -289,7 +289,7 @@ export class CssLabel {
   }
 
   public getVisibility (): boolean {
-    return this._visible
+    return this._visible && this._text.trim().length > 0
   }
 
   public isOnScreen (): boolean {

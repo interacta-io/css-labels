@@ -35,6 +35,8 @@ export const EmptyLabelVisibility: Story = {
   },
 }
 
+let cleanup: (() => void) | undefined
+
 export const IntersectLabelsPerformance: Story = {
   name: 'Many moving labels',
   render: () => renderFullViewportContainer(),
@@ -47,9 +49,13 @@ export const IntersectLabelsPerformance: Story = {
       },
     },
   },
+  async beforeEach () {
+    cleanup = undefined
+    return () => cleanup?.()
+  },
   play: ({ canvasElement }) => {
     const div = canvasElement.querySelector<HTMLDivElement>(`[${LABEL_RENDERER_DIV_ATTR}]`)
     if (!div) return
-    playIntersectLabelsPerformance(div)
+    cleanup = playIntersectLabelsPerformance(div)
   },
 }

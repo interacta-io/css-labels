@@ -2,6 +2,7 @@ import type { Preview } from '@storybook/html-vite'
 import { themes } from 'storybook/theming'
 
 import './style.css'
+import '../src/styles.css'
 
 const preview: Preview = {
   parameters: {

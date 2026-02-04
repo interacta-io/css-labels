@@ -20,6 +20,7 @@
   ],
   "scripts": {
     "build": "rm -rf dist && tsc && cp src/styles.css dist/styles.css",
+    "prepublishOnly": "npm run build",
     "watch": "tsc-watch",
     "lint": "eslint \"src/**/*.ts\" --ignore-path .gitignore",
     "storybook": "storybook dev -p 6006",

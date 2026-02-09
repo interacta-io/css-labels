@@ -271,16 +271,17 @@ export class CssLabel {
   public overlaps (label: CssLabel): boolean {
     this._measureText()
     label._measureText()
+    // Use the same box as getLeft/getRight/getTop/getBottom: centered at (_x, _y), bottom at _y
     return doRectsIntersect({
-      height: this._estimatedHeight,
+      x: this._x - this._estimatedWidth / 2,
+      y: this._y - this._estimatedHeight,
       width: this._estimatedWidth,
-      x: this._x,
-      y: this._y,
+      height: this._estimatedHeight,
     }, {
-      height: label._estimatedHeight,
+      x: label._x - label._estimatedWidth / 2,
+      y: label._y - label._estimatedHeight,
       width: label._estimatedWidth,
-      x: label._x,
-      y: label._y,
+      height: label._estimatedHeight,
     })
   }
 
@@ -292,8 +293,10 @@ export class CssLabel {
     return this._visible && this._text.trim().length > 0
   }
 
-  public isOnScreen (): boolean {
-    return this._x > 0 && this._y > 0 && this._x < this._container.offsetWidth && this._y < this._container.offsetHeight
+  public isOnScreen (containerWidth?: number, containerHeight?: number): boolean {
+    const width = containerWidth ?? this._container.offsetWidth
+    const height = containerHeight ?? this._container.offsetHeight
+    return this._x > 0 && this._y > 0 && this._x < width && this._y < height
   }
 
   public setWeight (weight: number): void {
@@ -302,6 +305,41 @@ export class CssLabel {
 
   public getWeight (): number {
     return this._weight
+  }
+
+  /**
+   * Gets the left edge of the label's bounding box.
+   * @returns The x coordinate of the left edge.
+   */
+  public getLeft (): number {
+    this._measureText()
+    return this._x - this._estimatedWidth / 2
+  }
+
+  /**
+   * Gets the right edge of the label's bounding box.
+   * @returns The x coordinate of the right edge.
+   */
+  public getRight (): number {
+    this._measureText()
+    return this._x + this._estimatedWidth / 2
+  }
+
+  /**
+   * Gets the top edge of the label's bounding box.
+   * @returns The y coordinate of the top edge.
+   */
+  public getTop (): number {
+    this._measureText()
+    return this._y - this._estimatedHeight
+  }
+
+  /**
+   * Gets the bottom edge of the label's bounding box.
+   * @returns The y coordinate of the bottom edge.
+   */
+  public getBottom (): number {
+    return this._y
   }
 
   /**

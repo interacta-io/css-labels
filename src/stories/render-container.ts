@@ -12,6 +12,18 @@ export function renderContainer (): HTMLDivElement {
   return wrapper
 }
 
+export function renderContainer200x400 (): HTMLDivElement {
+  const wrapper = document.createElement('div')
+  wrapper.style.cssText = 'display: flex; justify-content: center; align-items: center; min-height: 400px;'
+
+  const div = document.createElement('div')
+  div.style.cssText = 'position: relative; width: 200px; height: 400px; margin: 1rem;'
+  div.setAttribute(LABEL_RENDERER_DIV_ATTR, 'true')
+
+  wrapper.appendChild(div)
+  return wrapper
+}
+
 export function renderFullViewportContainer (): HTMLDivElement {
   const wrapper = document.createElement('div')
   wrapper.style.cssText = 'position: relative; width: 100vw; height: 100vh; box-sizing: border-box; padding: 0; margin: 0;'

@@ -147,6 +147,7 @@ export class LabelRenderer {
         if (isOverlapping) {
           if (label2.getWeight() > label1.getWeight()) {
             label1.setVisibility(label2.getForceShow() ? false : label1.getForceShow())
+            if (!label1.getVisibility()) break // no further comparisons with this label
           } else {
             label2.setVisibility(label1.getForceShow() ? false : label2.getForceShow())
           }

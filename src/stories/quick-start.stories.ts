@@ -1,11 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/html-vite'
-import { renderContainer, LABEL_RENDERER_DIV_ATTR } from './render-container'
+import { renderContainer, renderContainer200x400, LABEL_RENDERER_DIV_ATTR } from './render-container'
 import { playSingleLabel } from './quick-start/single-label'
 import { playLabels } from './quick-start/labels'
+import { playHtmlMultilineLabels } from './quick-start/html-multiline-labels'
 // @ts-expect-error - Vite raw import
 import singleLabelSource from './quick-start/single-label.ts?raw'
 // @ts-expect-error - Vite raw import
 import labelsSource from './quick-start/labels.ts?raw'
+// @ts-expect-error - Vite raw import
+import htmlMultilineLabelsSource from './quick-start/html-multiline-labels.ts?raw'
 
 const meta = {
   title: 'Quick Start',
@@ -51,5 +54,24 @@ export const Labels: Story = {
     const div = canvasElement.querySelector<HTMLDivElement>(`[${LABEL_RENDERER_DIV_ATTR}]`)
     if (!div) return
     playLabels(div)
+  },
+}
+
+export const HtmlMultilineLabels: Story = {
+  name: 'HTML multi-line labels',
+  render: renderContainer200x400,
+  parameters: {
+    docs: {
+      source: {
+        type: 'code',
+        code: htmlMultilineLabelsSource,
+        language: 'typescript',
+      },
+    },
+  },
+  play: ({ canvasElement }) => {
+    const div = canvasElement.querySelector<HTMLDivElement>(`[${LABEL_RENDERER_DIV_ATTR}]`)
+    if (!div) return
+    playHtmlMultilineLabels(div)
   },
 }

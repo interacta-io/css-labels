@@ -119,14 +119,29 @@ export class LabelRenderer {
 
   private _intersectLabels (): void {
     const cssLabels = Array.from(this._cssLabels.values())
-    cssLabels.forEach(l => l.setVisibility(l.isOnScreen()))
+
+    // Cache container dimensions to avoid repeated layout recalculations
+    const containerWidth = this._container.offsetWidth
+    const containerHeight = this._container.offsetHeight
+
+    cssLabels.forEach(l => l.setVisibility(l.isOnScreen(containerWidth, containerHeight)))
+
+    if (cssLabels.length <= 1) return
+
+    // Sweep and Prune: Sort labels by their left edge (X-axis)
+    cssLabels.sort((a, b) => a.getLeft() - b.getLeft())
+
+    // Check for overlaps using the sorted order
     for (let i = 0; i < cssLabels.length; i += 1) {
-      const label1 = cssLabels[i] as CssLabel
+      const label1 = cssLabels[i]
       if (!label1.getVisibility()) continue
 
       for (let j = i + 1; j < cssLabels.length; j += 1) {
-        const label2 = cssLabels[j] as CssLabel
+        const label2 = cssLabels[j]
         if (!label2.getVisibility()) continue
+
+        // No further x-overlap possible (sorted by left edge)
+        if (label2.getLeft() > label1.getRight()) break
 
         const isOverlapping = label1.overlaps(label2)
         if (isOverlapping) {
@@ -135,7 +150,6 @@ export class LabelRenderer {
           } else {
             label2.setVisibility(label1.getForceShow() ? false : label2.getForceShow())
           }
-          continue
         }
       }
     }

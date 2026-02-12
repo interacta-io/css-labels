@@ -86,7 +86,14 @@ export class LabelRenderer {
   }
 
   public draw (withIntersection = true): void {
-    if (withIntersection) this._intersectLabels()
+    if (withIntersection) {
+      this._intersectLabels()
+    } else {
+      const containerWidth = this._container.offsetWidth
+      const containerHeight = this._container.offsetHeight
+      this._cssLabels.forEach(cssLabel =>
+        cssLabel.setVisibility(cssLabel.isOnScreen(containerWidth, containerHeight)))
+    }
     this._cssLabels.forEach(cssLabel => cssLabel.draw())
   }
 

@@ -18,23 +18,18 @@ export class CssLabel {
   private _weight = 0
   private _needsMeasureUpdate = true
 
-  private _customFontSize = DEFAULT_FONT_SIZE
+  private _customFontSize: number | undefined = undefined
   private _customColor: string | undefined = undefined
   private _customOpacity: number | undefined = undefined
   private _shouldBeShown = false
-  private _text = ''
-  private _customPadding: Padding = {
-    left: LEFT_RIGHT_PADDING,
-    top: TOP_BOTTOM_PADDING,
-    right: LEFT_RIGHT_PADDING,
-    bottom: TOP_BOTTOM_PADDING,
-  }
+  private _text: string | number = ''
+  private _customPadding: Padding | undefined = undefined
 
   private _customPointerEvents: Options['pointerEvents'] | undefined
   private _customStyle: string | undefined
   private _customClassName: string | undefined
 
-  public constructor (container: HTMLDivElement, text?: string, dontInjectStyles?: boolean) {
+  public constructor (container: HTMLDivElement, text?: string | number, dontInjectStyles?: boolean) {
     if (!dontInjectStyles && !globalCssLabelStyles) globalCssLabelStyles = injectStyles(cssLabelStyles)
     this._container = container
     this._updateClasses()
@@ -47,10 +42,10 @@ export class CssLabel {
    * Sets the text of the element.
    * @param text - The text to set.
    */
-  public setText (text: string): void {
+  public setText (text: string | number): void {
     if (this._text !== text) {
       this._text = text
-      this.element.innerHTML = text
+      this.element.innerHTML = typeof text === 'number' ? String(text) : text
       this._needsMeasureUpdate = true
     }
   }
@@ -199,7 +194,8 @@ export class CssLabel {
     right: LEFT_RIGHT_PADDING,
     bottom: TOP_BOTTOM_PADDING,
   }): void {
-    if (this._customPadding.left !== padding.left ||
+    if (!this._customPadding ||
+        this._customPadding.left !== padding.left ||
         this._customPadding.top !== padding.top ||
         this._customPadding.right !== padding.right ||
         this._customPadding.bottom !== padding.bottom) {
@@ -210,7 +206,8 @@ export class CssLabel {
   }
 
   public resetPadding (): void {
-    if (this._customPadding.left === LEFT_RIGHT_PADDING &&
+    if (this._customPadding !== undefined &&
+        this._customPadding.left === LEFT_RIGHT_PADDING &&
         this._customPadding.top === TOP_BOTTOM_PADDING &&
         this._customPadding.right === LEFT_RIGHT_PADDING &&
         this._customPadding.bottom === TOP_BOTTOM_PADDING) {
@@ -290,7 +287,7 @@ export class CssLabel {
   }
 
   public getVisibility (): boolean {
-    return this._visible && this._text.trim().length > 0
+    return this._visible && (typeof this._text === 'number' || this._text.trim().length > 0)
   }
 
   public isOnScreen (containerWidth?: number, containerHeight?: number): boolean {
@@ -372,9 +369,15 @@ export class CssLabel {
    */
   private _measureText (): void {
     if (this._needsMeasureUpdate) {
-      const { left, top, right, bottom } = this._customPadding
-      this._estimatedWidth = this._customFontSize * this.fontWidthHeightRatio * this.element.innerHTML.length + left + right
-      this._estimatedHeight = this._customFontSize + top + bottom
+      const { left, top, right, bottom } = this._customPadding ?? {
+        left: LEFT_RIGHT_PADDING,
+        top: TOP_BOTTOM_PADDING,
+        right: LEFT_RIGHT_PADDING,
+        bottom: TOP_BOTTOM_PADDING,
+      }
+      const fontSize = this._customFontSize ?? DEFAULT_FONT_SIZE
+      this._estimatedWidth = fontSize * this.fontWidthHeightRatio * this.element.innerHTML.length + left + right
+      this._estimatedHeight = fontSize + top + bottom
       this._needsMeasureUpdate = false
     }
   }

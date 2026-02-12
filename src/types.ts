@@ -7,7 +7,7 @@ export type Padding = {
 
 export interface LabelOptions {
   id: string;
-  text: string;
+  text: string | number;
   x: number;
   y: number;
   weight?: number;

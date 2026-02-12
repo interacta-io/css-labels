@@ -22,7 +22,7 @@ export class CssLabel {
   private _customColor: string | undefined = undefined
   private _customOpacity: number | undefined = undefined
   private _shouldBeShown = false
-  private _text = ''
+  private _text: string | number = ''
   private _customPadding: Padding = {
     left: LEFT_RIGHT_PADDING,
     top: TOP_BOTTOM_PADDING,
@@ -34,7 +34,7 @@ export class CssLabel {
   private _customStyle: string | undefined
   private _customClassName: string | undefined
 
-  public constructor (container: HTMLDivElement, text?: string, dontInjectStyles?: boolean) {
+  public constructor (container: HTMLDivElement, text?: string | number, dontInjectStyles?: boolean) {
     if (!dontInjectStyles && !globalCssLabelStyles) globalCssLabelStyles = injectStyles(cssLabelStyles)
     this._container = container
     this._updateClasses()
@@ -47,10 +47,10 @@ export class CssLabel {
    * Sets the text of the element.
    * @param text - The text to set.
    */
-  public setText (text: string): void {
+  public setText (text: string | number): void {
     if (this._text !== text) {
       this._text = text
-      this.element.innerHTML = text
+      this.element.innerHTML = typeof text === 'number' ? String(text) : text
       this._needsMeasureUpdate = true
     }
   }
@@ -290,7 +290,7 @@ export class CssLabel {
   }
 
   public getVisibility (): boolean {
-    return this._visible && this._text.trim().length > 0
+    return this._visible && (typeof this._text === 'number' || this._text.trim().length > 0)
   }
 
   public isOnScreen (containerWidth?: number, containerHeight?: number): boolean {

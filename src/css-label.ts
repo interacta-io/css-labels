@@ -18,17 +18,12 @@ export class CssLabel {
   private _weight = 0
   private _needsMeasureUpdate = true
 
-  private _customFontSize = DEFAULT_FONT_SIZE
+  private _customFontSize: number | undefined = undefined
   private _customColor: string | undefined = undefined
   private _customOpacity: number | undefined = undefined
   private _shouldBeShown = false
   private _text: string | number = ''
-  private _customPadding: Padding = {
-    left: LEFT_RIGHT_PADDING,
-    top: TOP_BOTTOM_PADDING,
-    right: LEFT_RIGHT_PADDING,
-    bottom: TOP_BOTTOM_PADDING,
-  }
+  private _customPadding: Padding | undefined = undefined
 
   private _customPointerEvents: Options['pointerEvents'] | undefined
   private _customStyle: string | undefined
@@ -199,7 +194,8 @@ export class CssLabel {
     right: LEFT_RIGHT_PADDING,
     bottom: TOP_BOTTOM_PADDING,
   }): void {
-    if (this._customPadding.left !== padding.left ||
+    if (!this._customPadding ||
+        this._customPadding.left !== padding.left ||
         this._customPadding.top !== padding.top ||
         this._customPadding.right !== padding.right ||
         this._customPadding.bottom !== padding.bottom) {
@@ -210,7 +206,8 @@ export class CssLabel {
   }
 
   public resetPadding (): void {
-    if (this._customPadding.left === LEFT_RIGHT_PADDING &&
+    if (this._customPadding !== undefined &&
+        this._customPadding.left === LEFT_RIGHT_PADDING &&
         this._customPadding.top === TOP_BOTTOM_PADDING &&
         this._customPadding.right === LEFT_RIGHT_PADDING &&
         this._customPadding.bottom === TOP_BOTTOM_PADDING) {
@@ -372,9 +369,15 @@ export class CssLabel {
    */
   private _measureText (): void {
     if (this._needsMeasureUpdate) {
-      const { left, top, right, bottom } = this._customPadding
-      this._estimatedWidth = this._customFontSize * this.fontWidthHeightRatio * this.element.innerHTML.length + left + right
-      this._estimatedHeight = this._customFontSize + top + bottom
+      const { left, top, right, bottom } = this._customPadding ?? {
+        left: LEFT_RIGHT_PADDING,
+        top: TOP_BOTTOM_PADDING,
+        right: LEFT_RIGHT_PADDING,
+        bottom: TOP_BOTTOM_PADDING,
+      }
+      const fontSize = this._customFontSize ?? DEFAULT_FONT_SIZE
+      this._estimatedWidth = fontSize * this.fontWidthHeightRatio * this.element.innerHTML.length + left + right
+      this._estimatedHeight = fontSize + top + bottom
       this._needsMeasureUpdate = false
     }
   }

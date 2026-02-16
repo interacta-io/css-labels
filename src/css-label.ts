@@ -33,7 +33,7 @@ export class CssLabel {
     if (!dontInjectStyles && !globalCssLabelStyles) globalCssLabelStyles = injectStyles(cssLabelStyles)
     this._container = container
     this._updateClasses()
-    if (text) this.setText(text)
+    if (text !== undefined) this.setText(text)
     this.resetFontSize()
     this.resetPadding()
   }

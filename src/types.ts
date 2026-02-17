@@ -29,4 +29,8 @@ export interface Options {
   dontInjectStyles?: boolean;
   padding?: Padding;
   fontSize?: number;
+  /** When `true`, label text is set via `innerHTML` (`dangerouslySetHtml`).
+   * Only enable with trusted/sanitized content — XSS risk.
+   */
+  dangerousHtml?: boolean;
 }

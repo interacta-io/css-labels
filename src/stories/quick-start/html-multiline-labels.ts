@@ -6,6 +6,7 @@ export function playHtmlMultilineLabels (div: HTMLDivElement): void {
   const renderer = new LabelRenderer(div, {
     fontSize: 12,
     padding: labelPadding,
+    dangerousHtml: true,
   })
   // Container is 200×400; all labels at x = 100, y = 60, 120, 180, 240, 300, 360
   renderer.setLabels([

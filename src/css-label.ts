@@ -23,29 +23,61 @@ export class CssLabel {
   private _customOpacity: number | undefined = undefined
   private _shouldBeShown = false
   private _text: string | number = ''
+  /**
+   * Tracks whether content was set via `dangerouslySetHtml` (`true`) or `setText` (`false`).
+   * Needed so that switching mode with the same string (e.g. `setText` then `dangerouslySetHtml`) still updates the DOM.
+   */
+  private _contentIsHtml = false
   private _customPadding: Padding | undefined = undefined
 
   private _customPointerEvents: Options['pointerEvents'] | undefined
   private _customStyle: string | undefined
   private _customClassName: string | undefined
 
-  public constructor (container: HTMLDivElement, text?: string | number, dontInjectStyles?: boolean) {
+  /**
+   * @param container - The parent element for the label.
+   * @param text - Initial label content (plain text or, if dangerousHtml is true, HTML).
+   * @param dontInjectStyles - When true, global styles are not injected.
+   * @param dangerousHtml - When true, text is set via innerHTML (XSS risk). Only use with trusted/sanitized content.
+   */
+  public constructor (container: HTMLDivElement, text?: string | number, dontInjectStyles?: boolean, dangerousHtml?: boolean) {
     if (!dontInjectStyles && !globalCssLabelStyles) globalCssLabelStyles = injectStyles(cssLabelStyles)
     this._container = container
     this._updateClasses()
-    if (text !== undefined) this.setText(text)
+    if (text !== undefined) {
+      if (dangerousHtml) {
+        this.dangerouslySetHtml(text)
+      } else {
+        this.setText(text)
+      }
+    }
     this.resetFontSize()
     this.resetPadding()
   }
 
   /**
-   * Sets the text of the element.
+   * Sets the text of the element using textContent (safe from XSS).
    * @param text - The text to set.
    */
   public setText (text: string | number): void {
-    if (this._text !== text) {
+    if (this._text !== text || this._contentIsHtml) {
       this._text = text
-      this.element.innerHTML = typeof text === 'number' ? String(text) : text
+      this._contentIsHtml = false
+      this.element.textContent = typeof text === 'number' ? String(text) : text
+      this._needsMeasureUpdate = true
+    }
+  }
+
+  /**
+   * Sets the inner HTML of the element. Only use with trusted or sanitized content.
+   * WARNING: XSS risk — do not pass user-provided or unsanitized HTML.
+   * @param html - The HTML to set (string or number; numbers are converted to string).
+   */
+  public dangerouslySetHtml (html: string | number): void {
+    if (this._text !== html || !this._contentIsHtml) {
+      this._text = html
+      this._contentIsHtml = true
+      this.element.innerHTML = typeof html === 'number' ? String(html) : html
       this._needsMeasureUpdate = true
     }
   }

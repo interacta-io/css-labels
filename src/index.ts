@@ -14,6 +14,7 @@ export class LabelRenderer {
   private _dontInjectStyles: boolean | undefined
   private _padding: Padding | undefined
   private _fontSize: number | undefined
+  private _dangerousHtml = false
 
   public constructor (container: HTMLDivElement, options?: Options) {
     if (!options?.dontInjectStyles && !globalCssLabelRendererStyles) globalCssLabelRendererStyles = injectStyles(cssLabelContainerStyles)
@@ -26,6 +27,7 @@ export class LabelRenderer {
     if (options?.dontInjectStyles) this._dontInjectStyles = options.dontInjectStyles
     if (options?.padding) this._padding = options.padding
     if (options?.fontSize) this._fontSize = options.fontSize
+    if (options?.dangerousHtml) this._dangerousHtml = options.dangerousHtml
 
     if (options?.dispatchWheelEventElement) {
       this._dispatchWheelEventElement = options.dispatchWheelEventElement
@@ -42,13 +44,17 @@ export class LabelRenderer {
       if (exists) {
         labelsToDelete.delete(label.id)
       } else {
-        const cssLabel = new CssLabel(this._container, label.text, this._dontInjectStyles)
+        const cssLabel = new CssLabel(this._container, label.text, this._dontInjectStyles, this._dangerousHtml)
         this._cssLabels.set(label.id, cssLabel)
         this._elementToData.set(cssLabel.element, label)
       }
       const labelToUpdate = this._cssLabels.get(label.id)
       if (labelToUpdate) {
-        labelToUpdate.setText(text)
+        if (this._dangerousHtml) {
+          labelToUpdate.dangerouslySetHtml(text)
+        } else {
+          labelToUpdate.setText(text)
+        }
         labelToUpdate.setPosition(x, y)
         if (style !== undefined) labelToUpdate.setStyle(style)
         if (weight !== undefined) labelToUpdate.setWeight(weight)

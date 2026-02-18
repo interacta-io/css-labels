@@ -3,12 +3,15 @@ import { renderContainer, renderContainer200x400, LABEL_RENDERER_DIV_ATTR } from
 import { playSingleLabel } from './quick-start/single-label'
 import { playLabels } from './quick-start/labels'
 import { playHtmlMultilineLabels } from './quick-start/html-multiline-labels'
+import { playAngleDemo } from './quick-start/angle-demo'
 // @ts-expect-error - Vite raw import
 import singleLabelSource from './quick-start/single-label.ts?raw'
 // @ts-expect-error - Vite raw import
 import labelsSource from './quick-start/labels.ts?raw'
 // @ts-expect-error - Vite raw import
 import htmlMultilineLabelsSource from './quick-start/html-multiline-labels.ts?raw'
+// @ts-expect-error - Vite raw import
+import angleDemoSource from './quick-start/angle-demo.ts?raw'
 
 const meta = {
   title: 'Quick Start',
@@ -73,5 +76,24 @@ export const HtmlMultilineLabels: Story = {
     const div = canvasElement.querySelector<HTMLDivElement>(`[${LABEL_RENDERER_DIV_ATTR}]`)
     if (!div) return
     playHtmlMultilineLabels(div)
+  },
+}
+
+export const AngleDemo: Story = {
+  name: 'Angle demo',
+  render: renderContainer,
+  parameters: {
+    docs: {
+      source: {
+        type: 'code',
+        code: angleDemoSource,
+        language: 'typescript',
+      },
+    },
+  },
+  play: ({ canvasElement }) => {
+    const div = canvasElement.querySelector<HTMLDivElement>(`[${LABEL_RENDERER_DIV_ATTR}]`)
+    if (!div) return
+    playAngleDemo(div)
   },
 }

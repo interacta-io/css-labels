@@ -39,7 +39,7 @@ export class LabelRenderer {
     // Add new labels and take into account existing labels
     const labelsToDelete = new Map(this._cssLabels)
     labels.forEach(label => {
-      const { x, y, fontSize, color, text, weight, opacity, shouldBeShown, style, className, padding } = label
+      const { x, y, fontSize, color, text, weight, opacity, shouldBeShown, style, className, padding, rotation } = label
       const exists = this._cssLabels.get(label.id)
       if (exists) {
         labelsToDelete.delete(label.id)
@@ -77,6 +77,7 @@ export class LabelRenderer {
         if (opacity !== undefined) labelToUpdate.setOpacity(opacity)
         if (shouldBeShown !== undefined) labelToUpdate.setForceShow(shouldBeShown)
         if (className !== undefined) labelToUpdate.setClassName(className)
+        if (rotation !== undefined) labelToUpdate.setRotation(rotation)
       }
     })
 

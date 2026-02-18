@@ -33,6 +33,7 @@ export class CssLabel {
   private _customPointerEvents: Options['pointerEvents'] | undefined
   private _customStyle: string | undefined
   private _customClassName: string | undefined
+  private _rotation = 0
 
   /**
    * @param container - The parent element for the label.
@@ -113,6 +114,16 @@ export class CssLabel {
         const { top, right, bottom, left } = this._customPadding
         this.element.style.padding = `${top}px ${right}px ${bottom}px ${left}px`
       }
+    }
+  }
+
+  /**
+   * Sets the rotation of the label in degrees. Positive = clockwise.
+   * @param rotation - Degrees (0 = horizontal).
+   */
+  public setRotation (rotation: number): void {
+    if (this._rotation !== rotation) {
+      this._rotation = rotation
     }
   }
 
@@ -290,9 +301,16 @@ export class CssLabel {
     }
 
     if (isVisible) {
+      const rotate = this._rotation !== 0 ? ` rotate(${this._rotation}deg)` : ''
+      // When rotated, pivot around the label’s bottom-center so it stays anchored at (x, y).
+      if (this._rotation !== 0) {
+        this.element.style.transformOrigin = '50% 100%'
+      } else {
+        this.element.style.removeProperty('transform-origin')
+      }
       this.element.style.transform = `
         translate(-50%, -100%)
-        translate3d(${this._x}px, ${this._y}px, 0)
+        translate3d(${this._x}px, ${this._y}px, 0)${rotate}
       `
     }
   }

@@ -18,6 +18,8 @@ export interface LabelOptions {
   style?: string;
   className?: string;
   padding?: Padding;
+  /** Rotation in degrees. 0 = horizontal; positive = clockwise. */
+  rotation?: number;
 }
 
 export type OnClickCallback = (e: MouseEvent, label: LabelOptions) => void | undefined

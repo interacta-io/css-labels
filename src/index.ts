@@ -78,6 +78,7 @@ export class LabelRenderer {
         if (shouldBeShown !== undefined) labelToUpdate.setForceShow(shouldBeShown)
         if (className !== undefined) labelToUpdate.setClassName(className)
         if (rotation !== undefined) labelToUpdate.setRotation(rotation)
+        else labelToUpdate.resetRotation()
       }
     })
 

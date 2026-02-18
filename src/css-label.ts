@@ -128,6 +128,15 @@ export class CssLabel {
   }
 
   /**
+   * Resets the label rotation to 0 (horizontal).
+   */
+  public resetRotation (): void {
+    if (this._rotation !== 0) {
+      this._rotation = 0
+    }
+  }
+
+  /**
    * Sets the class name of the component
    * @param className - The class name to be set
    */

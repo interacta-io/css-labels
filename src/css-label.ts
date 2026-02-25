@@ -11,12 +11,13 @@ export class CssLabel {
   private _container: HTMLDivElement
   private _x = 0
   private _y = 0
-  private _estimatedWidth = 0
-  private _estimatedHeight = 0
+  private _cachedWidth = 0
+  private _cachedHeight = 0
   private _visible = false
   private _prevVisible = false
   private _weight = 0
   private _needsMeasureUpdate = true
+  private _hasBeenInDom = false
 
   private _customFontSize: number | undefined = undefined
   private _customColor: string | undefined = undefined
@@ -124,6 +125,7 @@ export class CssLabel {
   public setRotation (rotation: number): void {
     if (this._rotation !== rotation) {
       this._rotation = rotation
+      this._needsMeasureUpdate = true
     }
   }
 
@@ -133,6 +135,7 @@ export class CssLabel {
   public resetRotation (): void {
     if (this._rotation !== 0) {
       this._rotation = 0
+      this._needsMeasureUpdate = true
     }
   }
 
@@ -302,6 +305,10 @@ export class CssLabel {
     if (isVisible !== this._prevVisible) {
       if (this._prevVisible === false) {
         this._container.appendChild(this.element)
+        if (!this._hasBeenInDom) {
+          this._needsMeasureUpdate = true
+          this._hasBeenInDom = true
+        }
       } else {
         this._container.removeChild(this.element)
       }
@@ -329,15 +336,15 @@ export class CssLabel {
     label._measureText()
     // Use the same box as getLeft/getRight/getTop/getBottom: centered at (_x, _y), bottom at _y
     return doRectsIntersect({
-      x: this._x - this._estimatedWidth / 2,
-      y: this._y - this._estimatedHeight,
-      width: this._estimatedWidth,
-      height: this._estimatedHeight,
+      x: this._x - this._cachedWidth / 2,
+      y: this._y - this._cachedHeight,
+      width: this._cachedWidth,
+      height: this._cachedHeight,
     }, {
-      x: label._x - label._estimatedWidth / 2,
-      y: label._y - label._estimatedHeight,
-      width: label._estimatedWidth,
-      height: label._estimatedHeight,
+      x: label._x - label._cachedWidth / 2,
+      y: label._y - label._cachedHeight,
+      width: label._cachedWidth,
+      height: label._cachedHeight,
     })
   }
 
@@ -373,7 +380,7 @@ export class CssLabel {
    */
   public getLeft (): number {
     this._measureText()
-    return this._x - this._estimatedWidth / 2
+    return this._x - this._cachedWidth / 2
   }
 
   /**
@@ -382,7 +389,7 @@ export class CssLabel {
    */
   public getRight (): number {
     this._measureText()
-    return this._x + this._estimatedWidth / 2
+    return this._x + this._cachedWidth / 2
   }
 
   /**
@@ -391,7 +398,7 @@ export class CssLabel {
    */
   public getTop (): number {
     this._measureText()
-    return this._y - this._estimatedHeight
+    return this._y - this._cachedHeight
   }
 
   /**
@@ -428,10 +435,18 @@ export class CssLabel {
   }
 
   /**
-   * Measures the text if properties affecting dimensions have changed since the last measurement.
+   * Measures the label's bounding box if properties affecting it have changed.
+   * Uses `getBoundingClientRect()` for pixel-accurate results (multi-line, rotation-aware)
+   * when the element is in the DOM; falls back to a heuristic estimate otherwise.
    */
   private _measureText (): void {
-    if (this._needsMeasureUpdate) {
+    if (!this._needsMeasureUpdate) return
+
+    if (this.element.parentElement !== null) {
+      const boundingRect = this.element.getBoundingClientRect()
+      this._cachedWidth = boundingRect.width
+      this._cachedHeight = boundingRect.height
+    } else {
       const { left, top, right, bottom } = this._customPadding ?? {
         left: LEFT_RIGHT_PADDING,
         top: TOP_BOTTOM_PADDING,
@@ -439,9 +454,10 @@ export class CssLabel {
         bottom: TOP_BOTTOM_PADDING,
       }
       const fontSize = this._customFontSize ?? DEFAULT_FONT_SIZE
-      this._estimatedWidth = fontSize * this.fontWidthHeightRatio * this.element.innerHTML.length + left + right
-      this._estimatedHeight = fontSize + top + bottom
-      this._needsMeasureUpdate = false
+      this._cachedWidth = fontSize * this.fontWidthHeightRatio * this.element.innerHTML.length + left + right
+      this._cachedHeight = fontSize + top + bottom
     }
+
+    this._needsMeasureUpdate = false
   }
 }

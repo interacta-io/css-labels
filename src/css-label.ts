@@ -332,13 +332,13 @@ export class CssLabel {
     if (isVisible !== this._prevVisible) {
       if (this._prevVisible === false) {
         this._container.appendChild(this.element)
-        if (this._cachedRealWidth === undefined) {
-          this._updateRealSizeCache()
-        }
       } else {
         this._container.removeChild(this.element)
       }
       this._updateClasses()
+      if (this._cachedRealWidth === undefined && this._cachedRealHeight === undefined) {
+        this._updateRealSizeCache()
+      }
       this._prevVisible = isVisible
     }
 

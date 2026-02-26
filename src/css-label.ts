@@ -336,9 +336,6 @@ export class CssLabel {
         this._container.removeChild(this.element)
       }
       this._updateClasses()
-      if (this._cachedRealWidth === undefined && this._cachedRealHeight === undefined) {
-        this._updateRealSizeCache()
-      }
       this._prevVisible = isVisible
     }
 
@@ -354,6 +351,10 @@ export class CssLabel {
         translate(-50%, -100%)
         translate3d(${this._x}px, ${this._y}px, 0)${rotate}
       `
+      // Re-measure after transforms so cache reflects current rotation/state (e.g. after setText/setRotation while visible).
+      if (this._cachedRealWidth === undefined || this._cachedRealHeight === undefined) {
+        this._updateRealSizeCache()
+      }
     }
   }
 

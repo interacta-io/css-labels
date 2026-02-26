@@ -11,13 +11,16 @@ export class CssLabel {
   private _container: HTMLDivElement
   private _x = 0
   private _y = 0
-  private _cachedWidth = 0
-  private _cachedHeight = 0
+  /** Real size from getBoundingClientRect; set only after appendChild when not yet set; cleared when size options change. */
+  private _cachedRealWidth: number | undefined = undefined
+  private _cachedRealHeight: number | undefined = undefined
+  /** Heuristic size (font + padding); updated in _measureText when _needsMeasureUpdate. */
+  private _estimatedWidth = 0
+  private _estimatedHeight = 0
   private _visible = false
   private _prevVisible = false
   private _weight = 0
   private _needsMeasureUpdate = true
-  private _hasBeenInDom = false
 
   private _customFontSize: number | undefined = undefined
   private _customColor: string | undefined = undefined
@@ -58,6 +61,22 @@ export class CssLabel {
   }
 
   /**
+   * Width used for layout/overlap: real (getBoundingClientRect) when available, otherwise estimated.
+   */
+  public get width (): number {
+    this._measureText()
+    return this._cachedRealWidth ?? this._estimatedWidth
+  }
+
+  /**
+   * Height used for layout/overlap: real (getBoundingClientRect) when available, otherwise estimated.
+   */
+  public get height (): number {
+    this._measureText()
+    return this._cachedRealHeight ?? this._estimatedHeight
+  }
+
+  /**
    * Sets the text of the element using textContent (safe from XSS).
    * @param text - The text to set.
    */
@@ -67,6 +86,7 @@ export class CssLabel {
       this._contentIsHtml = false
       this.element.textContent = typeof text === 'number' ? String(text) : text
       this._needsMeasureUpdate = true
+      this._resetRealSizeCache()
     }
   }
 
@@ -81,6 +101,7 @@ export class CssLabel {
       this._contentIsHtml = true
       this.element.innerHTML = typeof html === 'number' ? String(html) : html
       this._needsMeasureUpdate = true
+      this._resetRealSizeCache()
     }
   }
 
@@ -126,6 +147,7 @@ export class CssLabel {
     if (this._rotation !== rotation) {
       this._rotation = rotation
       this._needsMeasureUpdate = true
+      this._resetRealSizeCache()
     }
   }
 
@@ -136,6 +158,7 @@ export class CssLabel {
     if (this._rotation !== 0) {
       this._rotation = 0
       this._needsMeasureUpdate = true
+      this._resetRealSizeCache()
     }
   }
 
@@ -161,6 +184,7 @@ export class CssLabel {
       this.element.style.fontSize = `${fontSize}px`
       this._customFontSize = fontSize
       this._needsMeasureUpdate = true
+      this._resetRealSizeCache()
     }
   }
 
@@ -172,6 +196,7 @@ export class CssLabel {
       this.element.style.fontSize = `${DEFAULT_FONT_SIZE}px`
       this._customFontSize = DEFAULT_FONT_SIZE
       this._needsMeasureUpdate = true
+      this._resetRealSizeCache()
     }
   }
 
@@ -257,6 +282,7 @@ export class CssLabel {
       this._customPadding = padding
       this.element.style.padding = `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`
       this._needsMeasureUpdate = true
+      this._resetRealSizeCache()
     }
   }
 
@@ -277,6 +303,7 @@ export class CssLabel {
     this.element.style.padding = `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`
     this._customPadding = padding
     this._needsMeasureUpdate = true
+    this._resetRealSizeCache()
   }
 
   /**
@@ -305,9 +332,8 @@ export class CssLabel {
     if (isVisible !== this._prevVisible) {
       if (this._prevVisible === false) {
         this._container.appendChild(this.element)
-        if (!this._hasBeenInDom) {
-          this._needsMeasureUpdate = true
-          this._hasBeenInDom = true
+        if (this._cachedRealWidth === undefined) {
+          this._updateRealSizeCache()
         }
       } else {
         this._container.removeChild(this.element)
@@ -332,19 +358,17 @@ export class CssLabel {
   }
 
   public overlaps (label: CssLabel): boolean {
-    this._measureText()
-    label._measureText()
     // Use the same box as getLeft/getRight/getTop/getBottom: centered at (_x, _y), bottom at _y
     return doRectsIntersect({
-      x: this._x - this._cachedWidth / 2,
-      y: this._y - this._cachedHeight,
-      width: this._cachedWidth,
-      height: this._cachedHeight,
+      x: this._x - this.width / 2,
+      y: this._y - this.height,
+      width: this.width,
+      height: this.height,
     }, {
-      x: label._x - label._cachedWidth / 2,
-      y: label._y - label._cachedHeight,
-      width: label._cachedWidth,
-      height: label._cachedHeight,
+      x: label._x - label.width / 2,
+      y: label._y - label.height,
+      width: label.width,
+      height: label.height,
     })
   }
 
@@ -379,8 +403,7 @@ export class CssLabel {
    * @returns The x coordinate of the left edge.
    */
   public getLeft (): number {
-    this._measureText()
-    return this._x - this._cachedWidth / 2
+    return this._x - this.width / 2
   }
 
   /**
@@ -388,8 +411,7 @@ export class CssLabel {
    * @returns The x coordinate of the right edge.
    */
   public getRight (): number {
-    this._measureText()
-    return this._x + this._cachedWidth / 2
+    return this._x + this.width / 2
   }
 
   /**
@@ -397,8 +419,7 @@ export class CssLabel {
    * @returns The y coordinate of the top edge.
    */
   public getTop (): number {
-    this._measureText()
-    return this._y - this._cachedHeight
+    return this._y - this.height
   }
 
   /**
@@ -434,29 +455,35 @@ export class CssLabel {
     }
   }
 
+  /** Clears the real-size cache so it is re-measured after next appendChild. */
+  private _resetRealSizeCache (): void {
+    this._cachedRealWidth = undefined
+    this._cachedRealHeight = undefined
+  }
+
+  /** Fills real-size cache from getBoundingClientRect when element is in DOM. Called after appendChild when cache does not exist. */
+  private _updateRealSizeCache (): void {
+    if (this.element.parentElement === null) return
+    const rect = this.element.getBoundingClientRect()
+    this._cachedRealWidth = rect.width
+    this._cachedRealHeight = rect.height
+  }
+
   /**
-   * Measures the label's bounding box if properties affecting it have changed.
-   * Uses `getBoundingClientRect()` for pixel-accurate results (multi-line, rotation-aware)
-   * when the element is in the DOM; falls back to a heuristic estimate otherwise.
+   * Updates estimated size when needed. Real size is cached separately after appendChild.
    */
   private _measureText (): void {
     if (!this._needsMeasureUpdate) return
 
-    if (this.element.parentElement !== null) {
-      const boundingRect = this.element.getBoundingClientRect()
-      this._cachedWidth = boundingRect.width
-      this._cachedHeight = boundingRect.height
-    } else {
-      const { left, top, right, bottom } = this._customPadding ?? {
-        left: LEFT_RIGHT_PADDING,
-        top: TOP_BOTTOM_PADDING,
-        right: LEFT_RIGHT_PADDING,
-        bottom: TOP_BOTTOM_PADDING,
-      }
-      const fontSize = this._customFontSize ?? DEFAULT_FONT_SIZE
-      this._cachedWidth = fontSize * this.fontWidthHeightRatio * this.element.innerHTML.length + left + right
-      this._cachedHeight = fontSize + top + bottom
+    const { left, top, right, bottom } = this._customPadding ?? {
+      left: LEFT_RIGHT_PADDING,
+      top: TOP_BOTTOM_PADDING,
+      right: LEFT_RIGHT_PADDING,
+      bottom: TOP_BOTTOM_PADDING,
     }
+    const fontSize = this._customFontSize ?? DEFAULT_FONT_SIZE
+    this._estimatedWidth = fontSize * this.fontWidthHeightRatio * this.element.innerHTML.length + left + right
+    this._estimatedHeight = fontSize + top + bottom
 
     this._needsMeasureUpdate = false
   }

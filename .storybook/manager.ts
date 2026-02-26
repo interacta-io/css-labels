@@ -5,4 +5,5 @@ addons.setConfig({
   theme: create({
     base: 'dark',
   }),
+  selectedPanel: 'storybook/docs/panel',
 })

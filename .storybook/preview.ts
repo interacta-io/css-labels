@@ -17,9 +17,6 @@ const preview: Preview = {
     docs: {
       theme: themes.dark,
       codePanel: true,
-      canvas: {
-        sourceState: 'shown',
-      },
     },
   actions:  { disable: true },
   interactions: { disable: true },

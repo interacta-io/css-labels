@@ -136,6 +136,7 @@ export class CssLabel {
         const { top, right, bottom, left } = this._customPadding
         this.element.style.padding = `${top}px ${right}px ${bottom}px ${left}px`
       }
+      this._resetRealSizeCache()
     }
   }
 
@@ -170,6 +171,7 @@ export class CssLabel {
     if (this._customClassName !== className) {
       this._customClassName = className
       this._updateClasses()
+      this._resetRealSizeCache()
     }
   }
 
@@ -483,7 +485,7 @@ export class CssLabel {
       bottom: TOP_BOTTOM_PADDING,
     }
     const fontSize = this._customFontSize ?? DEFAULT_FONT_SIZE
-    this._estimatedWidth = fontSize * this.fontWidthHeightRatio * this.element.innerHTML.length + left + right
+    this._estimatedWidth = fontSize * this.fontWidthHeightRatio * (this.element.textContent ?? '').length + left + right
     this._estimatedHeight = fontSize + top + bottom
 
     this._needsMeasureUpdate = false

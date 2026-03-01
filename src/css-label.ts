@@ -363,6 +363,10 @@ export class CssLabel {
     return this._weight
   }
 
+  public getPrevVisible (): boolean {
+    return this._prevVisible
+  }
+
   /**
    * Gets the left edge of the label's bounding box.
    * @returns The x coordinate of the left edge.

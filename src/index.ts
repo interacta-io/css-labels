@@ -139,6 +139,7 @@ export class LabelRenderer {
     const containerWidth = this._container.offsetWidth
     const containerHeight = this._container.offsetHeight
 
+    // Set label visibility to true if they are on screen
     cssLabels.forEach(l => l.setVisibility(l.isOnScreen(containerWidth, containerHeight)))
 
     if (cssLabels.length <= 1) return
@@ -158,15 +159,20 @@ export class LabelRenderer {
         // No further x-overlap possible (sorted by left edge)
         if (label2.getLeft() > label1.getRight()) break
 
-        const isOverlapping = label1.overlaps(label2)
-        if (isOverlapping) {
-          if (label2.getWeight() > label1.getWeight()) {
-            label1.setVisibility(label2.getForceShow() ? false : label1.getForceShow())
-            if (!label1.getVisibility()) break // no further comparisons with this label
-          } else {
-            label2.setVisibility(label1.getForceShow() ? false : label2.getForceShow())
-          }
-        }
+        // Continue if the labels don't overlap
+        if (!label1.overlaps(label2)) continue
+
+        // Prefer: 1) higher weight, 2) previously visible (when equal weight and no forceShow)
+        const preferLabel2 = label2.getWeight() > label1.getWeight() ||
+          (label1.getWeight() === label2.getWeight() &&
+            !label1.getForceShow() && !label2.getForceShow() &&
+            label2.getPrevVisible() && !label1.getPrevVisible())
+
+        const [winner, loser] = preferLabel2 ? [label2, label1] : [label1, label2]
+        loser.setVisibility(winner.getForceShow() ? false : loser.getForceShow())
+
+        // No further comparisons with this label
+        if (!label1.getVisibility()) break
       }
     }
   }

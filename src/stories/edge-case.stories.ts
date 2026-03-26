@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/html-vite'
 import { renderContainer, renderFullViewportContainer, LABEL_RENDERER_DIV_ATTR } from './render-container'
-import { playEmptyLabelVisibility } from './test/empty-label-visibility'
-import { playIntersectLabelsPerformance } from './test/intersect-labels-performance'
+import { emptyLabelVisibility } from './edge-cases/empty-label-visibility'
+import { swarmOfLabels } from './edge-cases/intersect-labels-performance'
 // @ts-expect-error - Vite raw import
-import emptyLabelVisibilitySource from './test/empty-label-visibility.ts?raw'
+import emptyLabelVisibilitySource from './edge-cases/empty-label-visibility.ts?raw'
 // @ts-expect-error - Vite raw import
-import intersectLabelsPerformanceSource from './test/intersect-labels-performance.ts?raw'
+import intersectLabelsPerformanceSource from './edge-cases/intersect-labels-performance.ts?raw'
 
 const meta = {
-  title: 'Test',
+  title: 'Edge Cases',
 } satisfies Meta
 
 // eslint-disable-next-line import/no-default-export
@@ -31,14 +31,14 @@ export const EmptyLabelVisibility: Story = {
   play: ({ canvasElement }) => {
     const div = canvasElement.querySelector<HTMLDivElement>(`[${LABEL_RENDERER_DIV_ATTR}]`)
     if (!div) return
-    playEmptyLabelVisibility(div)
+    emptyLabelVisibility(div)
   },
 }
 
 let cleanup: (() => void) | undefined
 
 export const IntersectLabelsPerformance: Story = {
-  name: 'Many moving labels',
+  name: '30K intersecting labels',
   render: () => renderFullViewportContainer(),
   parameters: {
     docs: {
@@ -56,6 +56,6 @@ export const IntersectLabelsPerformance: Story = {
   play: ({ canvasElement }) => {
     const div = canvasElement.querySelector<HTMLDivElement>(`[${LABEL_RENDERER_DIV_ATTR}]`)
     if (!div) return
-    cleanup = playIntersectLabelsPerformance(div)
+    cleanup = swarmOfLabels(div)
   },
 }

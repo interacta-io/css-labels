@@ -1,6 +1,6 @@
 import { CssLabel } from '@interacta/css-labels'
 
-export function playEmptyLabelVisibility (div: HTMLDivElement): void {
+export function emptyLabelVisibility (div: HTMLDivElement): void {
   const withText = new CssLabel(div, 'Visible')
   withText.setPadding({ left: 8, top: 4, right: 8, bottom: 4 })
   withText.setPosition(100, 60)

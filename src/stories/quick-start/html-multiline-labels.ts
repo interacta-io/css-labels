@@ -2,7 +2,7 @@ import { LabelRenderer } from '@interacta/css-labels'
 
 const labelPadding = { left: 12, top: 8, right: 12, bottom: 8 }
 
-export function playHtmlMultilineLabels (div: HTMLDivElement): void {
+export function htmlMultilineLabels (div: HTMLDivElement): void {
   const renderer = new LabelRenderer(div, {
     fontSize: 12,
     padding: labelPadding,
@@ -17,6 +17,7 @@ export function playHtmlMultilineLabels (div: HTMLDivElement): void {
       y: 60,
       opacity: 1,
       padding: labelPadding,
+      weight: 500,
     },
     {
       id: 'cafe',

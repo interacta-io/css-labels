@@ -4,7 +4,21 @@ import { Meta } from '@storybook/addon-docs/blocks'
 
 # CSS Labels
 
-Renders HTML labels with built-in intersection logic.
+CSS Labels is a lightweight, performance-focused library for rendering large numbers of HTML labels with built-in intersection handling. It was created to support scenes with many thousands of overlapping labels while keeping the API small and the rendering model predictable.
+
+It powers label rendering in [Cosmograph](https://cosmograph.app), the fastest web-based network graph rendering framework.
+
+## Why CSS Labels
+
+- Zero-dependency runtime package.
+- Built for scale, including large sets of intersecting labels.
+- Built-in overlap resolution with weighted label priority.
+- Stable visibility decisions to reduce flicker between frames.
+- Reuses DOM nodes by label `id` instead of recreating them every draw.
+- Uses cached and estimated label measurements to avoid unnecessary layout work.
+- Supports plain text, custom CSS, and trusted HTML / multi-line labels.
+- Works both as a batch renderer (`LabelRenderer`) and as individual labels (`CssLabel`).
+- Optional style injection, exported stylesheet, click handling, and wheel event forwarding for interactive canvases and graphs.
 
 ## Quick Start
 

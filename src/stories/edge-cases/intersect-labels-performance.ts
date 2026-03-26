@@ -25,7 +25,7 @@ function generateLabels (time: number, width: number, height: number): LabelOpti
   return labels
 }
 
-export function playIntersectLabelsPerformance (container: HTMLDivElement): () => void {
+export function swarmOfLabels (container: HTMLDivElement): () => void {
   const renderer = new LabelRenderer(container)
 
   let rafId: number

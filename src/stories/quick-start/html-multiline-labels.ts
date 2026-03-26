@@ -3,6 +3,9 @@ import { LabelRenderer } from '@interacta/css-labels'
 const labelPadding = { left: 12, top: 8, right: 12, bottom: 8 }
 
 export function htmlMultilineLabels (div: HTMLDivElement): void {
+  div.style.setProperty('--css-label-background-color', '#1e2428')
+  div.style.setProperty('--css-label-filter', 'brightness(150%)')
+
   const renderer = new LabelRenderer(div, {
     fontSize: 12,
     padding: labelPadding,

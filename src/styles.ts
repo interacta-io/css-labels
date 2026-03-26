@@ -6,7 +6,11 @@ export const hiddenLabelClassName = 'css-label--hidden'
 export const cssLabelContainerStyles = `
   :root {
     --css-label-background-color: #1e2428;
-    --css-label-brightness: brightness(150%);
+    --css-label-filter: brightness(150%);
+    --css-label-border-radius: 6px;
+    --css-label-font-weight: 500;
+    --css-label-transition: opacity 600ms;
+    --css-label-pointer-events: none;
   }
 
   .${labelsContainerClassName} {
@@ -42,13 +46,13 @@ export const cssLabelStyles = `
     -ms-user-select: none;
     user-select: none;
 
-    filter: var(--css-label-brightness);
-    pointer-events: none;
+    filter: var(--css-label-filter);
+    pointer-events: var(--css-label-pointer-events);
     background-color: var(--css-label-background-color);
-    font-weight: 500;
-    border-radius: 6px;
+    font-weight: var(--css-label-font-weight);
+    border-radius: var(--css-label-border-radius);
     
-    transition: opacity 600ms;
+    transition: var(--css-label-transition);
     opacity: 1;
   }
 

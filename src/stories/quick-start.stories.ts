@@ -1,9 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/html-vite'
-import { renderContainer, renderContainer200x400, LABEL_RENDERER_DIV_ATTR } from './render-container'
-import { playSingleLabel } from './quick-start/single-label'
-import { playLabels } from './quick-start/labels'
-import { playHtmlMultilineLabels } from './quick-start/html-multiline-labels'
-import { playAngleDemo } from './quick-start/angle-demo'
+import { renderContainer, LABEL_RENDERER_DIV_ATTR } from './render-container'
+import { individualLabel } from './quick-start/single-label'
+import { multipleLabels } from './quick-start/labels'
+import { htmlMultilineLabels } from './quick-start/html-multiline-labels'
+import { htmlMultilineLabelsIntersect } from './quick-start/html-multiline-labels-intersect'
+import { angleRotation } from './quick-start/label-rotation'
+import { cssVariables } from './quick-start/css-variables'
 // @ts-expect-error - Vite raw import
 import singleLabelSource from './quick-start/single-label.ts?raw'
 // @ts-expect-error - Vite raw import
@@ -11,7 +13,11 @@ import labelsSource from './quick-start/labels.ts?raw'
 // @ts-expect-error - Vite raw import
 import htmlMultilineLabelsSource from './quick-start/html-multiline-labels.ts?raw'
 // @ts-expect-error - Vite raw import
-import angleDemoSource from './quick-start/angle-demo.ts?raw'
+import htmlMultilineLabelsIntersectSource from './quick-start/html-multiline-labels-intersect.ts?raw'
+// @ts-expect-error - Vite raw import
+import labelRotationSource from './quick-start/label-rotation.ts?raw'
+// @ts-expect-error - Vite raw import
+import cssVariablesSource from './quick-start/css-variables.ts?raw'
 
 const meta = {
   title: 'Quick Start',
@@ -22,27 +28,8 @@ export default meta
 
 type Story = StoryObj
 
-export const SingleLabel: Story = {
-  name: 'Single label',
-  render: renderContainer,
-  parameters: {
-    docs: {
-      source: {
-        type: 'code',
-        code: singleLabelSource,
-        language: 'typescript',
-      },
-    },
-  },
-  play: ({ canvasElement }) => {
-    const div = canvasElement.querySelector<HTMLDivElement>(`[${LABEL_RENDERER_DIV_ATTR}]`)
-    if (!div) return
-    playSingleLabel(div)
-  },
-}
-
-export const Labels: Story = {
-  name: 'Labels',
+export const MultipleLabels: Story = {
+  name: 'Multiple labels',
   render: renderContainer,
   parameters: {
     docs: {
@@ -56,13 +43,32 @@ export const Labels: Story = {
   play: ({ canvasElement }) => {
     const div = canvasElement.querySelector<HTMLDivElement>(`[${LABEL_RENDERER_DIV_ATTR}]`)
     if (!div) return
-    playLabels(div)
+    multipleLabels(div)
+  },
+}
+
+export const IndividualLabel: Story = {
+  name: 'Individual label',
+  render: renderContainer,
+  parameters: {
+    docs: {
+      source: {
+        type: 'code',
+        code: singleLabelSource,
+        language: 'typescript',
+      },
+    },
+  },
+  play: ({ canvasElement }) => {
+    const div = canvasElement.querySelector<HTMLDivElement>(`[${LABEL_RENDERER_DIV_ATTR}]`)
+    if (!div) return
+    individualLabel(div)
   },
 }
 
 export const HtmlMultilineLabels: Story = {
   name: 'HTML multi-line labels',
-  render: renderContainer200x400,
+  render: () => renderContainer({ height: '400px' }),
   parameters: {
     docs: {
       source: {
@@ -75,18 +81,43 @@ export const HtmlMultilineLabels: Story = {
   play: ({ canvasElement }) => {
     const div = canvasElement.querySelector<HTMLDivElement>(`[${LABEL_RENDERER_DIV_ATTR}]`)
     if (!div) return
-    playHtmlMultilineLabels(div)
+    htmlMultilineLabels(div)
   },
 }
 
-export const AngleDemo: Story = {
-  name: 'Angle demo',
+let cleanupHtmlIntersect: (() => void) | undefined
+
+export const HtmlMultilineLabelsIntersect: Story = {
+  name: 'HTML multi-line labels (moving, intersecting)',
+  render: () => renderContainer({ width: '100%', height: '400px' }),
+  parameters: {
+    docs: {
+      source: {
+        type: 'code',
+        code: htmlMultilineLabelsIntersectSource,
+        language: 'typescript',
+      },
+    },
+  },
+  async beforeEach () {
+    cleanupHtmlIntersect = undefined
+    return () => cleanupHtmlIntersect?.()
+  },
+  play: ({ canvasElement }) => {
+    const div = canvasElement.querySelector<HTMLDivElement>(`[${LABEL_RENDERER_DIV_ATTR}]`)
+    if (!div) return
+    cleanupHtmlIntersect = htmlMultilineLabelsIntersect(div)
+  },
+}
+
+export const LabelRotation: Story = {
+  name: 'Label rotation',
   render: renderContainer,
   parameters: {
     docs: {
       source: {
         type: 'code',
-        code: angleDemoSource,
+        code: labelRotationSource,
         language: 'typescript',
       },
     },
@@ -94,6 +125,31 @@ export const AngleDemo: Story = {
   play: ({ canvasElement }) => {
     const div = canvasElement.querySelector<HTMLDivElement>(`[${LABEL_RENDERER_DIV_ATTR}]`)
     if (!div) return
-    playAngleDemo(div)
+    angleRotation(div)
+  },
+}
+
+let cleanupCssVariables: (() => void) | undefined
+
+export const CssVariables: Story = {
+  name: 'CSS variables',
+  render: () => renderContainer({ width: '260px', height: '340px' }),
+  parameters: {
+    docs: {
+      source: {
+        type: 'code',
+        code: cssVariablesSource,
+        language: 'typescript',
+      },
+    },
+  },
+  async beforeEach () {
+    cleanupCssVariables = undefined
+    return () => cleanupCssVariables?.()
+  },
+  play: ({ canvasElement }) => {
+    const div = canvasElement.querySelector<HTMLDivElement>(`[${LABEL_RENDERER_DIV_ATTR}]`)
+    if (!div) return
+    cleanupCssVariables = cssVariables(div)
   },
 }

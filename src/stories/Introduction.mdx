@@ -20,6 +20,7 @@ It powers label rendering in [Cosmograph](https://cosmograph.app), the fastest w
 - Works both as a batch renderer (`LabelRenderer`) and as individual labels (`CssLabel`).
 - Optional style injection, exported stylesheet, click handling, and wheel event forwarding for interactive canvases and graphs.
 
+
 ## Quick Start
 
 Install the package:
@@ -55,4 +56,36 @@ label.setPosition(100, 110)
 label.setVisibility(true)
 label.setOpacity(1)
 label.draw()
+```
+
+## Styling
+
+By default, CSS Labels injects its base styles automatically. If you use `dontInjectStyles`, import the bundled stylesheet instead:
+
+```javascript
+import '@interacta/css-labels/styles.css'
+```
+
+The label appearance can be customized with CSS variables, either globally on `:root` or on a specific labels container. See the [CSS variables story](?path=/story/quick-start--css-variables) for a live example.
+
+Available variables:
+
+- `--css-label-background-color`: label background fill.
+- `--css-label-filter`: visual filter applied to each label.
+- `--css-label-border-radius`: label corner radius.
+- `--css-label-font-weight`: default text weight.
+- `--css-label-transition`: transition used for label state changes.
+- `--css-label-pointer-events`: default pointer events behavior for each label.
+
+Example:
+
+```css
+#labels {
+  --css-label-background-color: rgba(118, 224, 196, 0.16);
+  --css-label-filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.28));
+  --css-label-border-radius: 999px;
+  --css-label-font-weight: 700;
+  --css-label-transition: opacity 180ms ease, transform 180ms ease;
+  --css-label-pointer-events: auto;
+}
 ```

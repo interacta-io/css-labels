@@ -45,7 +45,7 @@ export const cssLabelStyles = `
     filter: var(--css-label-brightness);
     pointer-events: none;
     background-color: var(--css-label-background-color);
-    font-weight: 700;
+    font-weight: 500;
     border-radius: 6px;
     
     transition: opacity 600ms;

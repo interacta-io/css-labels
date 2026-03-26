@@ -1,6 +1,6 @@
 import { doRectsIntersect } from './helper.js'
 import { LEFT_RIGHT_PADDING, TOP_BOTTOM_PADDING, DEFAULT_FONT_SIZE } from './variables.js'
-import { Padding, Options } from './types.js'
+import { LabelPadding, LabelRendererOptions } from './types.js'
 
 import { cssLabelStyles, injectStyles, labelClassName, hiddenLabelClassName } from './styles.js'
 
@@ -32,9 +32,9 @@ export class CssLabel {
    * Needed so that switching mode with the same string (e.g. `setText` then `dangerouslySetHtml`) still updates the DOM.
    */
   private _contentIsHtml = false
-  private _customPadding: Padding | undefined = undefined
+  private _customPadding: LabelPadding | undefined = undefined
 
-  private _customPointerEvents: Options['pointerEvents'] | undefined
+  private _customPointerEvents: LabelRendererOptions['pointerEvents'] | undefined
   private _customStyle: string | undefined
   private _customClassName: string | undefined
   private _rotation = 0
@@ -247,7 +247,7 @@ export class CssLabel {
    * This `pointerEvents` value will rewrite the opacity from `setStyle` CSS style if specified.
    * @param pointerEvents - The `pointerEvents` value to be set.
    */
-  public setPointerEvents (pointerEvents: Options['pointerEvents']): void {
+  public setPointerEvents (pointerEvents: LabelRendererOptions['pointerEvents']): void {
     if (this._customPointerEvents !== pointerEvents) {
       this.element.style.pointerEvents = `${pointerEvents}`
       this._customPointerEvents = pointerEvents

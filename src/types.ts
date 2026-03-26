@@ -1,4 +1,4 @@
-export type Padding = {
+export type LabelPadding = {
   left: number;
   top: number;
   right: number;
@@ -17,19 +17,19 @@ export interface LabelOptions {
   shouldBeShown?: boolean;
   style?: string;
   className?: string;
-  padding?: Padding;
+  padding?: LabelPadding;
   /** Rotation in degrees. 0 = horizontal; positive = clockwise. */
   rotation?: number;
 }
 
 export type OnClickCallback = (e: MouseEvent, label: LabelOptions) => void | undefined
 
-export interface Options {
+export interface LabelRendererOptions {
   onLabelClick?: OnClickCallback;
   pointerEvents?: 'none' | 'auto' | 'all';
   dispatchWheelEventElement?: HTMLElement;
   dontInjectStyles?: boolean;
-  padding?: Padding;
+  padding?: LabelPadding;
   fontSize?: number;
   /** When `true`, label text is set via `innerHTML` (`dangerouslySetHtml`).
    * Only enable with trusted/sanitized content — XSS risk.

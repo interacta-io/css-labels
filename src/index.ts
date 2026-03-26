@@ -1,5 +1,5 @@
 import { CssLabel } from './css-label.js'
-import { LabelOptions, OnClickCallback, Options, Padding } from './types.js'
+import { LabelOptions, OnClickCallback, LabelRendererOptions, LabelPadding } from './types.js'
 
 import { cssLabelContainerStyles, injectStyles, labelsContainerClassName, hiddenLabelsContainerClassName } from './styles.js'
 
@@ -8,15 +8,15 @@ export class LabelRenderer {
   private _cssLabels = new Map<string, CssLabel>()
   private _container: HTMLDivElement
   private _onClickCallback: OnClickCallback | undefined
-  private _pointerEvents: Options['pointerEvents'] | undefined
+  private _pointerEvents: LabelRendererOptions['pointerEvents'] | undefined
   private _elementToData = new Map<HTMLDivElement, LabelOptions>()
   private _dispatchWheelEventElement: HTMLElement | undefined
   private _dontInjectStyles: boolean | undefined
-  private _padding: Padding | undefined
+  private _padding: LabelPadding | undefined
   private _fontSize: number | undefined
   private _dangerousHtml = false
 
-  public constructor (container: HTMLDivElement, options?: Options) {
+  public constructor (container: HTMLDivElement, options?: LabelRendererOptions) {
     if (!options?.dontInjectStyles && !globalCssLabelRendererStyles) globalCssLabelRendererStyles = injectStyles(cssLabelContainerStyles)
     this._container = container
     container.addEventListener('click', this._onClick.bind(this))

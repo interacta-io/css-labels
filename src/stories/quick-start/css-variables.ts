@@ -1,4 +1,4 @@
-import { LabelRenderer } from '@interacta/css-labels'
+import { LabelRenderer } from '@cosmograph/vis-labels'
 
 export function cssVariables (div: HTMLDivElement): () => void {
   const status = document.createElement('div')
@@ -8,12 +8,12 @@ export function cssVariables (div: HTMLDivElement): () => void {
   div.style.background = 'linear-gradient(180deg, #13212b 0%, #0d151b 100%)'
   div.style.borderRadius = '16px'
   div.style.boxShadow = 'inset 0 0 0 1px rgba(180, 210, 226, 0.14)'
-  div.style.setProperty('--css-label-background-color', 'rgba(118, 224, 196, 0.16)')
-  div.style.setProperty('--css-label-filter', 'drop-shadow(0 10px 18px rgba(0, 0, 0, 0.28))')
-  div.style.setProperty('--css-label-border-radius', '999px')
-  div.style.setProperty('--css-label-font-weight', '700')
-  div.style.setProperty('--css-label-transition', 'opacity 180ms ease, transform 180ms ease')
-  div.style.setProperty('--css-label-pointer-events', 'auto')
+  div.style.setProperty('--vis-label-background-color', 'rgba(118, 224, 196, 0.16)')
+  div.style.setProperty('--vis-label-filter', 'drop-shadow(0 10px 18px rgba(0, 0, 0, 0.28))')
+  div.style.setProperty('--vis-label-border-radius', '999px')
+  div.style.setProperty('--vis-label-font-weight', '700')
+  div.style.setProperty('--vis-label-transition', 'opacity 180ms ease, transform 180ms ease')
+  div.style.setProperty('--vis-label-pointer-events', 'auto')
 
   div.appendChild(status)
 

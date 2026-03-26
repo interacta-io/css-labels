@@ -1,7 +1,7 @@
 {
-  "name": "@interacta/css-labels",
+  "name": "@cosmograph/vis-labels",
   "version": "0.6.0",
-  "description": "CSS Label renderer",
+  "description": "Visualization Label Renderer",
   "author": "Interacta",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -44,8 +44,8 @@
     "typescript": "^4.9.3"
   },
   "license": "MIT",
-  "repository": "git://github.com/interacta-io/css-labels.git",
-  "homepage": "https://github.com/interacta-io/css-labels",
+  "repository": "git://github.com/cosmograph-org/vis-labels.git",
+  "homepage": "https://github.com/cosmograph-org/vis-labels",
   "eslintConfig": {
     "extends": [
       "plugin:storybook/recommended"

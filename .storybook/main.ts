@@ -18,7 +18,7 @@ const config: StorybookConfig = {
         ...config.resolve,
         alias: {
           ...config.resolve?.alias,
-          '@interacta/css-labels': path.resolve(__dirname, '../src/index.ts'),
+          '@cosmograph/vis-labels': path.resolve(__dirname, '../src/index.ts'),
         },
       },
     }

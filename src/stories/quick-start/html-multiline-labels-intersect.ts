@@ -1,5 +1,5 @@
-import { LabelRenderer } from '@interacta/css-labels'
-import type { LabelOptions } from '@interacta/css-labels'
+import { LabelRenderer } from '@cosmograph/vis-labels'
+import type { LabelOptions } from '@cosmograph/vis-labels'
 
 const labelPadding = { left: 12, top: 8, right: 12, bottom: 8 }
 

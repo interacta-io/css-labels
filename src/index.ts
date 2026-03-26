@@ -1,11 +1,11 @@
-import { CssLabel } from './css-label.js'
+import { VisLabel } from './vis-label.js'
 import { LabelOptions, OnClickCallback, LabelRendererOptions, LabelPadding } from './types.js'
 
-import { cssLabelContainerStyles, injectStyles, labelsContainerClassName, hiddenLabelsContainerClassName } from './styles.js'
+import { labelContainerStyles, injectStyles, labelsContainerClassName, hiddenLabelsContainerClassName } from './styles.js'
 
-let globalCssLabelRendererStyles: HTMLStyleElement | undefined
+let globalVisLabelRendererStyles: HTMLStyleElement | undefined
 export class LabelRenderer {
-  private _cssLabels = new Map<string, CssLabel>()
+  private _visLabels = new Map<string, VisLabel>()
   private _container: HTMLDivElement
   private _onClickCallback: OnClickCallback | undefined
   private _pointerEvents: LabelRendererOptions['pointerEvents'] | undefined
@@ -17,7 +17,7 @@ export class LabelRenderer {
   private _dangerousHtml = false
 
   public constructor (container: HTMLDivElement, options?: LabelRendererOptions) {
-    if (!options?.dontInjectStyles && !globalCssLabelRendererStyles) globalCssLabelRendererStyles = injectStyles(cssLabelContainerStyles)
+    if (!options?.dontInjectStyles && !globalVisLabelRendererStyles) globalVisLabelRendererStyles = injectStyles(labelContainerStyles)
     this._container = container
     container.addEventListener('click', this._onClick.bind(this))
 
@@ -37,18 +37,18 @@ export class LabelRenderer {
 
   public setLabels (labels: LabelOptions[]): void {
     // Add new labels and take into account existing labels
-    const labelsToDelete = new Map(this._cssLabels)
+    const labelsToDelete = new Map(this._visLabels)
     labels.forEach(label => {
       const { x, y, fontSize, color, text, weight, opacity, shouldBeShown, style, className, padding, rotation } = label
-      const exists = this._cssLabels.get(label.id)
+      const exists = this._visLabels.get(label.id)
       if (exists) {
         labelsToDelete.delete(label.id)
       } else {
-        const cssLabel = new CssLabel(this._container, label.text, this._dontInjectStyles, this._dangerousHtml)
-        this._cssLabels.set(label.id, cssLabel)
+        const cssLabel = new VisLabel(this._container, label.text, this._dontInjectStyles, this._dangerousHtml)
+        this._visLabels.set(label.id, cssLabel)
         this._elementToData.set(cssLabel.element, label)
       }
-      const labelToUpdate = this._cssLabels.get(label.id)
+      const labelToUpdate = this._visLabels.get(label.id)
       if (labelToUpdate) {
         if (this._dangerousHtml) {
           labelToUpdate.dangerouslySetHtml(text)
@@ -84,12 +84,12 @@ export class LabelRenderer {
 
     // Remove labels from points that don't longer exist
     for (const [key] of labelsToDelete) {
-      const cssLabel = this._cssLabels.get(key)
+      const cssLabel = this._visLabels.get(key)
       if (cssLabel) {
         this._elementToData.delete(cssLabel.element)
         cssLabel.destroy()
       }
-      this._cssLabels.delete(key)
+      this._visLabels.delete(key)
     }
   }
 
@@ -99,10 +99,10 @@ export class LabelRenderer {
     } else {
       const containerWidth = this._container.offsetWidth
       const containerHeight = this._container.offsetHeight
-      this._cssLabels.forEach(cssLabel =>
+      this._visLabels.forEach(cssLabel =>
         cssLabel.setVisibility(cssLabel.isOnScreen(containerWidth, containerHeight)))
     }
-    this._cssLabels.forEach(cssLabel => cssLabel.draw())
+    this._visLabels.forEach(cssLabel => cssLabel.draw())
   }
 
   public show (): void {
@@ -116,7 +116,7 @@ export class LabelRenderer {
   public destroy (): void {
     this._container.removeEventListener('click', this._onClick.bind(this))
     this._container.removeEventListener('wheel', this._onWheel.bind(this))
-    this._cssLabels.forEach(cssLabel => cssLabel.destroy())
+    this._visLabels.forEach(cssLabel => cssLabel.destroy())
   }
 
   private _onClick (e: MouseEvent): void {
@@ -133,27 +133,27 @@ export class LabelRenderer {
   }
 
   private _intersectLabels (): void {
-    const cssLabels = Array.from(this._cssLabels.values())
+    const visLabels = Array.from(this._visLabels.values())
 
     // Cache container dimensions to avoid repeated layout recalculations
     const containerWidth = this._container.offsetWidth
     const containerHeight = this._container.offsetHeight
 
     // Set label visibility to true if they are on screen
-    cssLabels.forEach(l => l.setVisibility(l.isOnScreen(containerWidth, containerHeight)))
+    visLabels.forEach(l => l.setVisibility(l.isOnScreen(containerWidth, containerHeight)))
 
-    if (cssLabels.length <= 1) return
+    if (visLabels.length <= 1) return
 
     // Sweep and Prune: Sort labels by their left edge (X-axis)
-    cssLabels.sort((a, b) => a.getLeft() - b.getLeft())
+    visLabels.sort((a, b) => a.getLeft() - b.getLeft())
 
     // Check for overlaps using the sorted order
-    for (let i = 0; i < cssLabels.length; i += 1) {
-      const label1 = cssLabels[i]
+    for (let i = 0; i < visLabels.length; i += 1) {
+      const label1 = visLabels[i]
       if (!label1.getVisibility()) continue
 
-      for (let j = i + 1; j < cssLabels.length; j += 1) {
-        const label2 = cssLabels[j]
+      for (let j = i + 1; j < visLabels.length; j += 1) {
+        const label2 = visLabels[j]
         if (!label2.getVisibility()) continue
 
         // No further x-overlap possible (sorted by left edge)
@@ -178,5 +178,5 @@ export class LabelRenderer {
   }
 }
 
-export { CssLabel }
+export { VisLabel }
 export type { LabelOptions }

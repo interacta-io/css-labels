@@ -1,4 +1,4 @@
-import { LabelRenderer } from '@interacta/css-labels'
+import { LabelRenderer } from '@cosmograph/vis-labels'
 
 export function multipleLabels (div: HTMLDivElement): void {
   const renderer = new LabelRenderer(div, { fontSize: 40 })

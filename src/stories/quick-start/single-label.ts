@@ -1,7 +1,7 @@
-import { CssLabel } from '@interacta/css-labels'
+import { VisLabel } from '@cosmograph/vis-labels'
 
 export function individualLabel (div: HTMLDivElement): void {
-  const label = new CssLabel(div, '🐣')
+  const label = new VisLabel(div, '🐣')
   label.setPosition(100, 110)
   label.setVisibility(true)
   label.setOpacity(1)

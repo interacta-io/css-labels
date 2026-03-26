@@ -1,21 +1,35 @@
 <p align="center" style="color: #444">
-  <h1 align="center">CSS Labels</h1>
+  <h1 align="center">Vis Labels</h1>
 </p>
 
-Renders HTML labels with built-in intersection logic.
+Vis Labels is a lightweight, performance-focused library for rendering large numbers of HTML labels with built-in intersection handling. It was created to support scenes with many thousands of overlapping labels while keeping the API small and the rendering model predictable.
+
+It powers label rendering in [Cosmograph](https://cosmograph.app), the fastest web-based network graph rendering framework.
+
+### Why Vis Labels
+
+- Zero-dependency runtime package.
+- Built for scale, including large sets of intersecting labels.
+- Built-in overlap resolution with weighted label priority.
+- Stable visibility decisions to reduce flicker between frames.
+- Reuses DOM nodes by label `id` instead of recreating them every draw.
+- Uses cached and estimated label measurements to avoid unnecessary layout work.
+- Supports plain text, custom CSS, and trusted HTML / multi-line labels.
+- Works both as a batch renderer (`LabelRenderer`) and as individual labels (`VisLabel`).
+- Optional style injection, exported stylesheet, click handling, and wheel event forwarding for interactive canvases and graphs.
 
 ### Quick Start
 
 Install the package:
 
 ```bash
-npm install @interacta/css-labels
+npm install @cosmograph/vis-labels
 ```
 
 Create HTML div element and render labels:
 
 ```javascript
-import { LabelRenderer } from '@interacta/css-labels'
+import { LabelRenderer } from '@cosmograph/vis-labels'
 
 const div = document.querySelector('#labels')  
 const renderer = new LabelRenderer(div)
@@ -28,13 +42,13 @@ renderer.setLabels([
 renderer.draw()
 ```
 
-Or create single Css label:
+Or create single Vis label:
 
 ```javascript
-import { CssLabel } from '@interacta/css-labels'
+import { VisLabel } from '@cosmograph/vis-labels'
 const div = document.querySelector('#labels')
 
-const label = new CssLabel(div, '🐣')
+const label = new VisLabel(div, '🐣')
 label.setPosition(100, 110)
 label.setVisibility(true)
 label.setOpacity(1)

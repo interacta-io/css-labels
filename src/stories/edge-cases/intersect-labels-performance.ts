@@ -1,5 +1,5 @@
-import { LabelRenderer } from '@interacta/css-labels'
-import type { LabelOptions } from '@interacta/css-labels'
+import { LabelRenderer } from '@cosmograph/vis-labels'
+import type { LabelOptions } from '@cosmograph/vis-labels'
 
 const LABEL_COUNT = 30000
 const SMALL_LABEL_COUNT = 250

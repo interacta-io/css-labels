@@ -2,10 +2,10 @@ import { doRectsIntersect } from './helper.js'
 import { LEFT_RIGHT_PADDING, TOP_BOTTOM_PADDING, DEFAULT_FONT_SIZE } from './variables.js'
 import { LabelPadding, LabelRendererOptions } from './types.js'
 
-import { cssLabelStyles, injectStyles, labelClassName, hiddenLabelClassName } from './styles.js'
+import { labelStyles, injectStyles, labelClassName, hiddenLabelClassName } from './styles.js'
 
-let globalCssLabelStyles: HTMLStyleElement | undefined
-export class CssLabel {
+let globalVisLabelStyles: HTMLStyleElement | undefined
+export class VisLabel {
   public element: HTMLDivElement = document.createElement('div')
   public readonly fontWidthHeightRatio = 0.6
   private _container: HTMLDivElement
@@ -46,7 +46,7 @@ export class CssLabel {
    * @param dangerousHtml - When true, text is set via innerHTML (XSS risk). Only use with trusted/sanitized content.
    */
   public constructor (container: HTMLDivElement, text?: string | number, dontInjectStyles?: boolean, dangerousHtml?: boolean) {
-    if (!dontInjectStyles && !globalCssLabelStyles) globalCssLabelStyles = injectStyles(cssLabelStyles)
+    if (!dontInjectStyles && !globalVisLabelStyles) globalVisLabelStyles = injectStyles(labelStyles)
     this._container = container
     this._updateClasses()
     if (text !== undefined) {
@@ -360,7 +360,7 @@ export class CssLabel {
     }
   }
 
-  public overlaps (label: CssLabel): boolean {
+  public overlaps (label: VisLabel): boolean {
     // Use the same box as getLeft/getRight/getTop/getBottom: centered at (_x, _y), bottom at _y
     return doRectsIntersect({
       x: this._x - this.width / 2,

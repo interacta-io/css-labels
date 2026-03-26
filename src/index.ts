@@ -15,23 +15,32 @@ export class LabelRenderer {
   private _padding: LabelPadding | undefined
   private _fontSize: number | undefined
   private _dangerousHtml = false
+  private readonly _boundOnClick = this._onClick.bind(this)
+  private readonly _boundOnWheel = this._onWheel.bind(this)
 
   public constructor (container: HTMLDivElement, options?: LabelRendererOptions) {
     if (!options?.dontInjectStyles && !globalVisLabelRendererStyles) globalVisLabelRendererStyles = injectStyles(labelContainerStyles)
     this._container = container
-    container.addEventListener('click', this._onClick.bind(this))
-
     this._container.className = labelsContainerClassName
-    if (options?.onLabelClick) this._onClickCallback = options.onLabelClick
-    if (options?.pointerEvents) this._pointerEvents = options.pointerEvents
-    if (options?.dontInjectStyles) this._dontInjectStyles = options.dontInjectStyles
-    if (options?.padding) this._padding = options.padding
-    if (options?.fontSize) this._fontSize = options.fontSize
-    if (options?.dangerousHtml) this._dangerousHtml = options.dangerousHtml
 
-    if (options?.dispatchWheelEventElement) {
-      this._dispatchWheelEventElement = options.dispatchWheelEventElement
-      this._container.addEventListener('wheel', this._onWheel.bind(this))
+    container.addEventListener('click', this._boundOnClick)
+    this.setOptions(options ?? {})
+  }
+
+  public setOptions (options: LabelRendererOptions): void {
+    this._onClickCallback = options.onLabelClick
+    this._pointerEvents = options.pointerEvents
+    this._dontInjectStyles = options.dontInjectStyles
+    this._padding = options.padding
+    this._fontSize = options.fontSize
+    this._dangerousHtml = Boolean(options.dangerousHtml)
+
+    const previousDispatchWheelEventElement = this._dispatchWheelEventElement
+    this._dispatchWheelEventElement = options.dispatchWheelEventElement
+    if (!previousDispatchWheelEventElement && this._dispatchWheelEventElement) {
+      this._container.addEventListener('wheel', this._boundOnWheel)
+    } else if (previousDispatchWheelEventElement && !this._dispatchWheelEventElement) {
+      this._container.removeEventListener('wheel', this._boundOnWheel)
     }
   }
 
@@ -114,8 +123,8 @@ export class LabelRenderer {
   }
 
   public destroy (): void {
-    this._container.removeEventListener('click', this._onClick.bind(this))
-    this._container.removeEventListener('wheel', this._onWheel.bind(this))
+    this._container.removeEventListener('click', this._boundOnClick)
+    this._container.removeEventListener('wheel', this._boundOnWheel)
     this._visLabels.forEach(cssLabel => cssLabel.destroy())
   }
 

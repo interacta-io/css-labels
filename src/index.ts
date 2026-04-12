@@ -142,6 +142,10 @@ export class LabelRenderer {
     // Set label visibility to true if they are on screen
     cssLabels.forEach(l => l.setVisibility(l.isOnScreen(containerWidth, containerHeight)))
 
+    // Re-measure any visible labels already mounted but with a stale/missing size cache
+    // (e.g. after content or style changed). Labels not yet in the DOM are skipped (no-op).
+    cssLabels.forEach(l => { if (l.getVisibility()) l.refreshSizeFromDom() })
+
     if (cssLabels.length <= 1) return
 
     // Sweep and Prune: Sort labels by their left edge (X-axis)

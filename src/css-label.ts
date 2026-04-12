@@ -464,6 +464,11 @@ export class CssLabel {
     this._cachedRealHeight = undefined
   }
 
+  /** Re-measures from the DOM if the element is currently mounted. No-op otherwise. */
+  public refreshSizeFromDom (): void {
+    this._updateRealSizeCache()
+  }
+
   /** Fills real-size cache from getBoundingClientRect when element is in DOM. Called after appendChild when cache does not exist. */
   private _updateRealSizeCache (): void {
     if (this.element.parentElement === null) return

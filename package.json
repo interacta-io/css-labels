@@ -23,7 +23,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsc && cp src/styles.css dist/styles.css",
+    "build": "rm -rf dist && tsc && cp src/styles.css dist/styles.css && cp -R ai dist/ai",
     "prepublishOnly": "npm run build",
     "watch": "tsc-watch",
     "lint": "eslint \"src/**/*.ts\" --ignore-path .gitignore",

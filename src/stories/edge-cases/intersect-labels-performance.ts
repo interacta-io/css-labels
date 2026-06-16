@@ -1,8 +1,6 @@
 import { LabelRenderer } from '@cosmograph/vis-labels'
 import type { LabelOptions } from '@cosmograph/vis-labels'
 
-const LABEL_COUNT = 30000
-const SMALL_LABEL_COUNT = 250
 const LABEL_COLORS = [
   '#5eead4',
   '#60a5fa',
@@ -69,9 +67,11 @@ function animateSwarm (container: HTMLDivElement, labelCount: number): () => voi
 }
 
 export function swarmOfLabels (container: HTMLDivElement): () => void {
+  const LABEL_COUNT = 30000
   return animateSwarm(container, LABEL_COUNT)
 }
 
 export function smallSwarmOfLabels (container: HTMLDivElement): () => void {
+  const SMALL_LABEL_COUNT = 250
   return animateSwarm(container, SMALL_LABEL_COUNT)
 }

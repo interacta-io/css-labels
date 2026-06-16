@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/html-vite'
 import { renderContainer, renderFullViewportContainer, LABEL_RENDERER_DIV_ATTR } from './render-container'
-import { emptyLabelVisibility } from './2-edge-cases/empty-label-visibility'
-import { swarmOfLabels, smallSwarmOfLabels } from './2-edge-cases/intersect-labels-performance'
+import { emptyLabelVisibility } from './edge-cases/empty-label-visibility'
+import { swarmOfLabels, smallSwarmOfLabels } from './edge-cases/intersect-labels-performance'
 // @ts-expect-error - Vite raw import
-import emptyLabelVisibilitySource from './2-edge-cases/empty-label-visibility.ts?raw'
+import emptyLabelVisibilitySource from './edge-cases/empty-label-visibility.ts?raw'
 // @ts-expect-error - Vite raw import
-import intersectLabelsPerformanceSource from './2-edge-cases/intersect-labels-performance.ts?raw'
+import intersectLabelsPerformanceSource from './edge-cases/intersect-labels-performance.ts?raw'
 
 const meta = {
   id: 'test',

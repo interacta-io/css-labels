@@ -14,7 +14,7 @@ export class VisLabel {
   /** Real size from getBoundingClientRect; set only after appendChild when not yet set; cleared when size options change. */
   private _cachedRealWidth: number | undefined = undefined
   private _cachedRealHeight: number | undefined = undefined
-  /** Heuristic size (font + padding); updated in _measureText when _needsMeasureUpdate. */
+  /** Heuristic size (font + padding); updated in _estimateTextSize when _needsMeasureUpdate. */
   private _estimatedWidth = 0
   private _estimatedHeight = 0
   private _visible = false
@@ -64,16 +64,18 @@ export class VisLabel {
    * Width used for layout/overlap: real (getBoundingClientRect) when available, otherwise estimated.
    */
   public get width (): number {
-    this._measureText()
-    return this._cachedRealWidth ?? this._estimatedWidth
+    if (this._cachedRealWidth !== undefined) return this._cachedRealWidth
+    this._estimateTextSize()
+    return this._estimatedWidth
   }
 
   /**
    * Height used for layout/overlap: real (getBoundingClientRect) when available, otherwise estimated.
    */
   public get height (): number {
-    this._measureText()
-    return this._cachedRealHeight ?? this._estimatedHeight
+    if (this._cachedRealHeight !== undefined) return this._cachedRealHeight
+    this._estimateTextSize()
+    return this._estimatedHeight
   }
 
   /**
@@ -447,6 +449,11 @@ export class VisLabel {
     this.element.remove()
   }
 
+  /** Re-measures from the DOM if the element is currently mounted. No-op otherwise. */
+  public refreshSizeFromDom (): void {
+    this._updateRealSizeCache()
+  }
+
   private _updateClasses (): void {
     const isVisible = this.getVisibility()
     if (isVisible) {
@@ -464,11 +471,6 @@ export class VisLabel {
     this._cachedRealHeight = undefined
   }
 
-  /** Re-measures from the DOM if the element is currently mounted. No-op otherwise. */
-  public refreshSizeFromDom (): void {
-    this._updateRealSizeCache()
-  }
-
   /** Fills real-size cache from getBoundingClientRect when element is in DOM. Called after appendChild when cache does not exist. */
   private _updateRealSizeCache (): void {
     if (this.element.parentElement === null) return
@@ -480,7 +482,7 @@ export class VisLabel {
   /**
    * Updates estimated size when needed. Real size is cached separately after appendChild.
    */
-  private _measureText (): void {
+  private _estimateTextSize (): void {
     if (!this._needsMeasureUpdate) return
 
     const { left, top, right, bottom } = this._customPadding ?? {
@@ -490,9 +492,24 @@ export class VisLabel {
       bottom: TOP_BOTTOM_PADDING,
     }
     const fontSize = this._customFontSize ?? DEFAULT_FONT_SIZE
-    this._estimatedWidth = fontSize * this.fontWidthHeightRatio * (this.element.textContent ?? '').length + left + right
-    this._estimatedHeight = fontSize + top + bottom
+    const lines = this._getEstimatedTextLines()
+    const longestLineLength = lines.reduce((longest, line) => Math.max(longest, line.length), 0)
+    const lineHeight = fontSize * 1.2
+    this._estimatedWidth = fontSize * this.fontWidthHeightRatio * longestLineLength + left + right
+    this._estimatedHeight = (lines.length > 1 ? lineHeight * lines.length : fontSize) + top + bottom
 
     this._needsMeasureUpdate = false
+  }
+
+  private _getEstimatedTextLines (): string[] {
+    const text = String(this._text)
+    const normalizedText = this._contentIsHtml
+      ? text
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/(?:div|p|li|tr|h[1-6])>/gi, '\n')
+        .replace(/<[^>]+>/g, '')
+      : text
+    const lines = normalizedText.split(/\r?\n/).map(line => line.trim())
+    return lines.length > 0 ? lines : ['']
   }
 }

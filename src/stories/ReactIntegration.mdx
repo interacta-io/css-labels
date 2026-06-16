@@ -1,0 +1,62 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { ReactIntegrationDemo } from './react-integration-demo'
+
+<Meta title="React Integration" />
+
+# React Integration
+
+Vis Labels also ships with a React integration for teams that want to stay in a declarative component model while still using the same underlying `LabelRenderer`.
+
+The `VisLabels` component accepts your `labels` array plus the same renderer options such as `fontSize`, `padding`, `pointerEvents`, and `dangerousHtml`. It renders a single labels container and keeps the renderer instance in sync as React props change.
+
+## Live Demo
+
+Use the controls below to verify that the integration responds to React state changes:
+
+<ReactIntegrationDemo />
+
+## Basic Usage
+
+```tsx
+import { VisLabels } from '@cosmograph/vis-labels/react'
+
+const labels = [
+  { id: 'monster', text: '👾', x: 100, y: 50, opacity: 1 },
+  { id: 'alien', text: '👽', x: 50, y: 150, opacity: 1 },
+  { id: 'ufo', text: '🛸', x: 150, y: 150, opacity: 1 },
+]
+
+export function App (): JSX.Element {
+  return (
+    <div style={{ position: 'relative', width: 200, height: 200 }}>
+      <VisLabels labels={labels} fontSize={18} />
+    </div>
+  )
+}
+```
+
+## Forwarded Ref
+
+```tsx
+import { useRef } from 'react'
+import { VisLabels } from '@cosmograph/vis-labels/react'
+import type { VisLabelsHandle } from '@cosmograph/vis-labels/react'
+
+export function App (): JSX.Element {
+  const labelsRef = useRef<VisLabelsHandle>(null)
+
+  return (
+    <div style={{ position: 'relative', width: 320, height: 220 }}>
+      <VisLabels
+        ref={labelsRef}
+        labels={[
+          { id: 'a', text: 'Alpha', x: 90, y: 72, opacity: 1 },
+          { id: 'b', text: 'Beta', x: 120, y: 108, opacity: 1 },
+        ]}
+        fontSize={16}
+        withIntersection
+      />
+    </div>
+  )
+}
+```

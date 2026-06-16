@@ -54,3 +54,53 @@ label.setVisibility(true)
 label.setOpacity(1)
 label.draw()
 ```
+
+### React
+
+Import the React wrapper from the `react` subpath:
+
+```tsx
+import { VisLabels } from '@cosmograph/vis-labels/react'
+
+const labels = [
+  { id: 'monster', text: '👾', x: 100, y: 50, opacity: 1 },
+  { id: 'alien', text: '👽', x: 50, y: 150, opacity: 1 },
+  { id: 'ufo', text: '🛸', x: 150, y: 150, opacity: 1 },
+]
+
+export function App (): JSX.Element {
+  return (
+    <div style={{ position: 'relative', width: 200, height: 200 }}>
+      <VisLabels labels={labels} fontSize={18} />
+    </div>
+  )
+}
+```
+
+You can also access the underlying renderer and container via a forwarded ref:
+
+```tsx
+import { useEffect, useRef } from 'react'
+import { VisLabels } from '@cosmograph/vis-labels/react'
+import type { VisLabelsHandle } from '@cosmograph/vis-labels/react'
+
+export function App (): JSX.Element {
+  const labelsRef = useRef<VisLabelsHandle>(null)
+
+  useEffect(() => {
+    labelsRef.current?.renderer?.draw()
+  }, [])
+
+  return (
+    <div style={{ position: 'relative', width: 200, height: 200 }}>
+      <VisLabels
+        ref={labelsRef}
+        labels={[
+          { id: 'label', text: 'Hello React', x: 100, y: 110, opacity: 1 },
+        ]}
+        fontSize={16}
+      />
+    </div>
+  )
+}
+```

@@ -7,6 +7,11 @@ import '../src/styles.css'
 const preview: Preview = {
   parameters: {
     layout: 'fullscreen',
+    options: {
+      storySort: {
+        order: ['Introduction', 'React Integration', 'Quick Start', 'Edge Cases'],
+      },
+    },
     controls: {
       disable: true,
       matchers: {

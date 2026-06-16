@@ -18,6 +18,7 @@ const config: StorybookConfig = {
         ...config.resolve,
         alias: {
           ...config.resolve?.alias,
+          '@cosmograph/vis-labels/react': path.resolve(__dirname, '../src/react.tsx'),
           '@cosmograph/vis-labels': path.resolve(__dirname, '../src/index.ts'),
         },
       },

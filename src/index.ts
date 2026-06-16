@@ -21,13 +21,13 @@ export class LabelRenderer {
   public constructor (container: HTMLDivElement, options?: LabelRendererOptions) {
     if (!options?.dontInjectStyles && !globalVisLabelRendererStyles) globalVisLabelRendererStyles = injectStyles(labelContainerStyles)
     this._container = container
-    this._container.className = labelsContainerClassName
+    this._setContainerVisibility(false)
 
     container.addEventListener('click', this._boundOnClick)
     this.setOptions(options ?? {})
   }
 
-  public setOptions (options: LabelRendererOptions): void {
+  public setOptions (options: LabelRendererOptions = {}): void {
     this._onClickCallback = options.onLabelClick
     this._pointerEvents = options.pointerEvents
     this._dontInjectStyles = options.dontInjectStyles
@@ -83,6 +83,7 @@ export class LabelRenderer {
         else labelToUpdate.resetPadding()
 
         if (this._pointerEvents !== undefined) labelToUpdate.setPointerEvents(this._pointerEvents)
+        else labelToUpdate.resetPointerEvents()
         if (opacity !== undefined) labelToUpdate.setOpacity(opacity)
         if (shouldBeShown !== undefined) labelToUpdate.setForceShow(shouldBeShown)
         if (className !== undefined) labelToUpdate.setClassName(className)
@@ -115,11 +116,11 @@ export class LabelRenderer {
   }
 
   public show (): void {
-    this._container.className = labelsContainerClassName
+    this._setContainerVisibility(false)
   }
 
   public hide (): void {
-    this._container.className = `${labelsContainerClassName} ${hiddenLabelsContainerClassName}`
+    this._setContainerVisibility(true)
   }
 
   public destroy (): void {
@@ -139,6 +140,11 @@ export class LabelRenderer {
     e.preventDefault()
     const newWheelEvent = new WheelEvent('wheel', e)
     this._dispatchWheelEventElement?.dispatchEvent(newWheelEvent)
+  }
+
+  private _setContainerVisibility (hidden: boolean): void {
+    this._container.classList.add(labelsContainerClassName)
+    this._container.classList.toggle(hiddenLabelsContainerClassName, hidden)
   }
 
   private _intersectLabels (): void {
@@ -188,4 +194,4 @@ export class LabelRenderer {
 }
 
 export { VisLabel }
-export type { LabelOptions }
+export type { LabelOptions, LabelPadding, LabelRendererOptions, OnClickCallback }
